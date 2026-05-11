@@ -1,0 +1,124 @@
+[
+  {
+    "id": 1,
+    "tipo": "departamento",
+    "titulo": "Departamento moderno en Palermo",
+    "ubicacion": "Palermo, Buenos Aires",
+    "precio": 280000,
+    "ambientes": 2,
+    "dormitorios": 1,
+    "banos": 1,
+    "superficie": 52,
+    "descripcion": "Luminoso departamento de 2 ambientes ubicado en el corazón de Palermo. Cuenta con cocina integrada al living, balcón corrido con vista a la calle arbolada, baño completo y dormitorio amplio con placard. Edificio con portería y lavadero. A pasos del subte y parques.",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800"
+    ],
+    "destacada": true,
+    "disponible": true,
+    "expensas": 18000
+  },
+  {
+    "id": 2,
+    "tipo": "casa",
+    "titulo": "Casa con jardín en Belgrano",
+    "ubicacion": "Belgrano, Buenos Aires",
+    "precio": 450000,
+    "ambientes": 4,
+    "dormitorios": 3,
+    "banos": 2,
+    "superficie": 150,
+    "descripcion": "Espectacular casa de 3 dormitorios con amplio jardín y garage para 2 autos. Living comedor con chimenea, cocina equipada, 2 baños completos y patio trasero. Excelente ubicación, a 10 minutos del centro comercial y colegios.",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800",
+      "https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=800",
+      "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800"
+    ],
+    "destacada": true,
+    "disponible": true,
+    "expensas": 0
+  },
+  {
+    "id": 3,
+    "tipo": "departamento",
+    "titulo": "Monoambiente premium en Recoleta",
+    "ubicacion": "Recoleta, Buenos Aires",
+    "precio": 180000,
+    "ambientes": 1,
+    "dormitorios": 1,
+    "banos": 1,
+    "superficie": 35,
+    "descripcion": "Elegante monoambiente totalmente reformado en la exclusiva zona de Recoleta. Piso de madera, cocina americana equipada, baño con hidromasaje. Edificio de categoría con gimnasio y terraza. Ideal para profesionales.",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800",
+      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800",
+      "https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=800"
+    ],
+    "destacada": true,
+    "disponible": true,
+    "expensas": 12000
+  },
+  {
+    "id": 4,
+    "tipo": "ph",
+    "titulo": "PH con terraza en Villa Crespo",
+    "ubicacion": "Villa Crespo, Buenos Aires",
+    "precio": 360000,
+    "ambientes": 3,
+    "dormitorios": 2,
+    "banos": 1,
+    "superficie": 90,
+    "descripcion": "PH de 3 ambientes con terraza propia de 30m². Dos dormitorios, living amplio, cocina independiente y patio. Sin expensas. Barrio de moda, cerca de bares, restaurantes y el Alto Palermo.",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800",
+      "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800"
+    ],
+    "destacada": false,
+    "disponible": true,
+    "expensas": 0
+  },
+  {
+    "id": 5,
+    "tipo": "departamento",
+    "titulo": "3 ambientes luminoso en Caballito",
+    "ubicacion": "Caballito, Buenos Aires",
+    "precio": 320000,
+    "ambientes": 3,
+    "dormitorios": 2,
+    "banos": 1,
+    "superficie": 75,
+    "descripcion": "Amplio departamento de 3 ambientes en piso alto con excelente luminosidad. Dos dormitorios, baño completo, cocina separada y lavadero. Edificio con ascensor y portería. Muy bien conectado.",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=800",
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800",
+      "https://images.unsplash.com/photo-1556020685-ae41abfc9365?w=800"
+    ],
+    "destacada": false,
+    "disponible": true,
+    "expensas": 22000
+  },
+  {
+    "id": 6,
+    "tipo": "casa",
+    "titulo": "Casa esquina en Flores",
+    "ubicacion": "Flores, Buenos Aires",
+    "precio": 390000,
+    "ambientes": 5,
+    "dormitorios": 3,
+    "banos": 2,
+    "superficie": 180,
+    "descripcion": "Casa esquina de 5 ambientes con garage doble y jardín. 3 dormitorios en planta alta, planta baja con living, comedor, cocina y 2 baños. Patio y lavadero. Excelente estado.",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800",
+      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800",
+      "https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=800"
+    ],
+    "destacada": false,
+    "disponible": false,
+    "expensas": 0
+  }
+]
