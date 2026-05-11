@@ -180,7 +180,7 @@ export default function Home() {
               <img className="img-grande" src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=700" alt="Equipo" />
               <img className="img-chica" src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400" alt="Propiedad" />
               <div className="nosotros-badge">
-                <strong>10+</strong>
+                <strong>20+</strong>
                 <span>Años de<br />experiencia</span>
               </div>
             </div>
@@ -230,35 +230,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIOS */}
-      <section className="testimonios">
-        <div className="container">
-          <div className="section-header section-header--center">
-            <div className="section-tag">Testimonios</div>
-            <h2 style={{ color: 'white' }}>Lo que dicen nuestros clientes</h2>
-          </div>
-          <div className="testimonios-grid">
-            {[
-              { ini: 'ML', nombre: 'María López', zona: 'Palermo, Buenos Aires', texto: '"Encontré mi departamento en menos de una semana. La atención fue increíble y todo el proceso muy transparente. Súper recomendable."', dest: false },
-              { ini: 'CR', nombre: 'Carlos Rodríguez', zona: 'Belgrano, Buenos Aires', texto: '"El proceso fue rapidísimo. Nos asesoraron en todo momento y en 10 días ya estábamos firmando el contrato. Excelente equipo profesional."', dest: true },
-              { ini: 'SG', nombre: 'Sofía García', zona: 'Caballito, Buenos Aires', texto: '"La mejor inmobiliaria con la que trabajé. Siempre disponibles, muy honestos y con un trato muy humano. Ya recomendé a varios amigos."', dest: false },
-            ].map(t => (
-              <div key={t.nombre} className={`testimonio fade-up${t.dest ? ' testimonio--destacado' : ''}`}>
-                <div className="testimonio-top">
-                  <div className="estrellas">★★★★★</div>
-                  <i className="fa-solid fa-quote-right quote-icon" />
-                </div>
-                <p>{t.texto}</p>
-                <div className="testimonio-autor">
-                  <div className="avatar">{t.ini}</div>
-                  <div><strong>{t.nombre}</strong><span>{t.zona}</span></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA BANNER */}
       <section className="cta-banner">
         <div className="cta-bg" />
@@ -287,10 +258,10 @@ export default function Home() {
               <p>Contactanos por cualquiera de estos medios y te responderemos a la brevedad.</p>
               <div className="info-items">
                 {[
-                  { icon: 'fa-location-dot', label: 'Dirección', val: 'Av. Corrientes 1234, Buenos Aires' },
-                  { icon: 'fa-phone', label: 'Teléfono', val: '+54 11 1234-5678' },
-                  { icon: 'fa-envelope', label: 'Email', val: 'contacto@inmobiliaria.com' },
-                  { icon: 'fa-brands fa-whatsapp', label: 'WhatsApp', val: '+54 9 11 1234-5678', brand: true },
+                  { icon: 'fa-location-dot', label: 'Dirección', val: 'Av. Mosconi 2804, Buenos Aires' },
+                  { icon: 'fa-phone', label: 'Teléfono', val: '+54 11 4571-3005' },
+                  { icon: 'fa-envelope', label: 'Email', val: 'calvinotabuada@hotmail.com' },
+                  { icon: 'fa-brands fa-whatsapp', label: 'WhatsApp', val: '+54 9 11 4571-3005', brand: true },
                 ].map(item => (
                   <div key={item.label} className="info-item">
                     <div className="info-icon"><i className={`fa-${item.brand ? 'brands' : 'solid'} ${item.icon}`} /></div>
@@ -309,11 +280,11 @@ export default function Home() {
               <div className="form-row">
                 <div className="form-group">
                   <label>Nombre completo</label>
-                  <input type="text" placeholder="Juan García" required />
+                  <input type="text" placeholder="Tu nombre" required />
                 </div>
                 <div className="form-group">
                   <label>Email</label>
-                  <input type="email" placeholder="juan@email.com" required />
+                  <input type="email" placeholder="ejemplo@email.com" required />
                 </div>
               </div>
               <div className="form-row">

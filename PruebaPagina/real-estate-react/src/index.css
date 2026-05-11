@@ -39,7 +39,7 @@ body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(
   display: flex; align-items: center; justify-content: space-between;
   height: 72px;
 }
-.nav-logo img { height: 48px; object-fit: contain; }
+.nav-logo img { height: 140px; object-fit: contain; }
 .nav-links { display: flex; list-style: none; gap: 2.5rem; }
 .nav-links a {
   text-decoration: none; color: rgba(255,255,255,0.75);
