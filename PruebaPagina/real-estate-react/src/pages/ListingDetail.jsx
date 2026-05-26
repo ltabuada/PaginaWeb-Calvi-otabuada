@@ -2,11 +2,12 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import listings from '../data/listings.json'
+import { useListings } from '../context/ListingsContext'
 
 export default function ListingDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { listings } = useListings()
   const propiedad = listings.find(p => p.id === parseInt(id))
 
   const [modalOpen, setModalOpen] = useState(false)

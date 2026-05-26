@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 export default function PropiedadCard({ propiedad }) {
   const navigate = useNavigate()
-  const { id, tipo, titulo, ubicacion, precio, dormitorios, banos, superficie, ambientes, imagenes, disponible } = propiedad
+  const { id, tipo, operacion, titulo, ubicacion, precio, dormitorios, banos, superficie, ambientes, imagenes, disponible } = propiedad
   const precioFmt = new Intl.NumberFormat('es-AR').format(precio)
 
   return (
@@ -10,8 +10,13 @@ export default function PropiedadCard({ propiedad }) {
       <div className="card-img-wrapper">
         <img src={imagenes[0]} alt={titulo} loading="lazy" />
         <span className={`card-badge ${disponible ? 'disponible' : 'alquilado'}`}>
-          {disponible ? 'Disponible' : 'Alquilado'}
+          {disponible ? 'Disponible' : 'No disponible'}
         </span>
+        {operacion && (
+          <span className={`card-badge-op card-badge-op--${operacion}`}>
+            {operacion === 'alquiler' ? 'Alquiler' : 'Venta'}
+          </span>
+        )}
       </div>
       <div className="card-body">
         <div className="card-tipo">{tipo}</div>
@@ -26,7 +31,10 @@ export default function PropiedadCard({ propiedad }) {
           <div className="feature"><i className="fa-solid fa-layer-group" /> {ambientes} amb.</div>
         </div>
         <div className="card-footer">
-          <div className="card-precio">${precioFmt} <span>/mes</span></div>
+          <div className="card-precio">
+            ${precioFmt}
+            {operacion === 'alquiler' && <span> /mes</span>}
+          </div>
           <button className="card-btn" onClick={e => { e.stopPropagation(); navigate(`/propiedad/${id}`) }}>
             Ver más <i className="fa-solid fa-arrow-right" />
           </button>

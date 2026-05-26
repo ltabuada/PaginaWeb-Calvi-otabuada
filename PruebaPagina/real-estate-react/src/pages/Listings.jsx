@@ -3,22 +3,25 @@ import { useSearchParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import PropiedadCard from '../components/PropiedadCard'
-import listings from '../data/listings.json'
+import { useListings } from '../context/ListingsContext'
 
 export default function Listings() {
+  const { listingsPublicos } = useListings()
   const [searchParams] = useSearchParams()
+  const [filtroOperacion, setFiltroOperacion] = useState(searchParams.get('operacion') || '')
   const [filtroTipo, setFiltroTipo] = useState(searchParams.get('tipo') || '')
   const [filtroAmbientes, setFiltroAmbientes] = useState(searchParams.get('ambientes') || '')
   const [filtroPrecio, setFiltroPrecio] = useState('')
   const [filtroBuscar, setFiltroBuscar] = useState(searchParams.get('buscar') || '')
   const [listMode, setListMode] = useState(false)
-  const [resultado, setResultado] = useState(listings)
+  const [resultado, setResultado] = useState(listingsPublicos)
 
-  useEffect(() => { filtrar() }, [])
+  useEffect(() => { filtrar() }, [listingsPublicos])
 
   const filtrar = () => {
     const buscarLow = filtroBuscar.toLowerCase()
-    const res = listings.filter(p => {
+    const res = listingsPublicos.filter(p => {
+      if (filtroOperacion && p.operacion !== filtroOperacion) return false
       if (filtroTipo && p.tipo !== filtroTipo) return false
       if (filtroAmbientes) {
         const amb = parseInt(filtroAmbientes)
@@ -39,13 +42,21 @@ export default function Listings() {
       <div className="page-header">
         <div className="page-header-content">
           <h1>Nuestras Propiedades</h1>
-          <p>Encontrá el alquiler ideal entre nuestra amplia selección</p>
+          <p>Alquiler, venta e inversión — encontrá lo que buscás</p>
         </div>
       </div>
 
       {/* FILTROS */}
       <div className="filtros-section">
         <div className="filtros-wrapper">
+          <div className="filtro-group">
+            <label>Operación</label>
+            <select value={filtroOperacion} onChange={e => setFiltroOperacion(e.target.value)}>
+              <option value="">Todas</option>
+              <option value="alquiler">Alquiler</option>
+              <option value="venta">Venta</option>
+            </select>
+          </div>
           <div className="filtro-group">
             <label>Tipo</label>
             <select value={filtroTipo} onChange={e => setFiltroTipo(e.target.value)}>

@@ -2,6 +2,7 @@
   {
     "id": 1,
     "tipo": "departamento",
+    "operacion": "alquiler",
     "titulo": "Departamento moderno en Palermo",
     "ubicacion": "Palermo, Buenos Aires",
     "precio": 280000,
@@ -23,6 +24,7 @@
   {
     "id": 2,
     "tipo": "casa",
+    "operacion": "alquiler",
     "titulo": "Casa con jardín en Belgrano",
     "ubicacion": "Belgrano, Buenos Aires",
     "precio": 450000,
@@ -44,6 +46,7 @@
   {
     "id": 3,
     "tipo": "departamento",
+    "operacion": "alquiler",
     "titulo": "Monoambiente premium en Recoleta",
     "ubicacion": "Recoleta, Buenos Aires",
     "precio": 180000,
@@ -64,6 +67,7 @@
   {
     "id": 4,
     "tipo": "ph",
+    "operacion": "alquiler",
     "titulo": "PH con terraza en Villa Crespo",
     "ubicacion": "Villa Crespo, Buenos Aires",
     "precio": 360000,
@@ -84,6 +88,7 @@
   {
     "id": 5,
     "tipo": "departamento",
+    "operacion": "alquiler",
     "titulo": "3 ambientes luminoso en Caballito",
     "ubicacion": "Caballito, Buenos Aires",
     "precio": 320000,
@@ -104,6 +109,7 @@
   {
     "id": 6,
     "tipo": "casa",
+    "operacion": "alquiler",
     "titulo": "Casa esquina en Flores",
     "ubicacion": "Flores, Buenos Aires",
     "precio": 390000,

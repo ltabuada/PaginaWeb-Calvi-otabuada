@@ -3,15 +3,16 @@ import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import PropiedadCard from '../components/PropiedadCard'
-import listings from '../data/listings.json'
+import { useListings } from '../context/ListingsContext'
 
 const SLIDES = [
-  'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1800',
-  'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1800',
+  'https://imgar.zonapropcdn.com/avisos/resize/1/00/58/97/12/19/1200x1200/2049202376.jpg?isFirstImage=true',
+  '/fotoSlide.jpeg',
   'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1800',
 ]
 
 export default function Home() {
+  const { listingsPublicos } = useListings()
   const navigate = useNavigate()
   const [slide, setSlide] = useState(0)
   const [buscar, setBuscar] = useState('')
@@ -44,8 +45,8 @@ export default function Home() {
   const handleBuscar = () => {
     const params = new URLSearchParams()
     if (buscar) params.set('buscar', buscar)
-    if (tipo) params.set('tipo', tipo)
-    if (ambientes) params.set('ambientes', ambientes)
+    if (tipo) params.set('operacion', tipo)       // tipo state ahora guarda operacion
+    if (ambientes) params.set('tipo', ambientes)  // ambientes state ahora guarda tipo
     navigate(`/propiedades${params.toString() ? '?' + params.toString() : ''}`)
   }
 
@@ -55,7 +56,8 @@ export default function Home() {
     setTimeout(() => { setFormSent(false); e.target.reset() }, 3000)
   }
 
-  const destacadas = listings.filter(p => p.destacada).slice(0, 3)
+  const barrios = [...new Set(listingsPublicos.map(p => p.ubicacion.split(',')[0].trim()))].sort()
+  const destacadas = listingsPublicos.filter(p => p.destacada).slice(0, 3)
 
   return (
     <>
@@ -72,37 +74,36 @@ export default function Home() {
         <div className="hero-overlay" />
         <div className="hero-content">
           <div className="hero-tag">
-            <span className="dot" /> Propiedades en alquiler
+            <span className="dot" /> Alquiler · Venta · Inversión
           </div>
-          <h1>Tu próximo hogar<br /><span className="highlight">te está esperando</span></h1>
-          <p>Encontrá la propiedad ideal con la mejor atención personalizada.<br />Casas, departamentos y PH en las mejores zonas.</p>
+          <h1>Tu inmobiliaria<br /><span className="highlight">de confianza</span></h1>
+          <p>Alquilá, comprá, vendé o tasá tu propiedad con nuestro respaldo</p>
 
           <div className="hero-search">
             <div className="search-field">
               <i className="fa-solid fa-location-dot" />
-              <input type="text" placeholder="Barrio o ciudad..."
-                value={buscar} onChange={e => setBuscar(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleBuscar()} />
-            </div>
-            <div className="search-divider" />
-            <div className="search-field">
-              <i className="fa-solid fa-home" />
-              <select value={tipo} onChange={e => setTipo(e.target.value)}>
-                <option value="">Tipo de propiedad</option>
-                <option value="departamento">Departamento</option>
-                <option value="casa">Casa</option>
-                <option value="ph">PH</option>
+              <select value={buscar} onChange={e => setBuscar(e.target.value)}>
+                <option value="">Barrio</option>
+                {barrios.map(b => <option key={b} value={b}>{b}</option>)}
               </select>
             </div>
             <div className="search-divider" />
             <div className="search-field">
-              <i className="fa-solid fa-layer-group" />
+              <i className="fa-solid fa-tag" />
+              <select value={tipo} onChange={e => setTipo(e.target.value)}>
+                <option value="">Operación</option>
+                <option value="alquiler">Alquiler</option>
+                <option value="venta">Venta</option>
+              </select>
+            </div>
+            <div className="search-divider" />
+            <div className="search-field">
+              <i className="fa-solid fa-home" />
               <select value={ambientes} onChange={e => setAmbientes(e.target.value)}>
-                <option value="">Ambientes</option>
-                <option value="1">1 ambiente</option>
-                <option value="2">2 ambientes</option>
-                <option value="3">3 ambientes</option>
-                <option value="4">4+</option>
+                <option value="">Tipo de propiedad</option>
+                <option value="departamento">Departamento</option>
+                <option value="casa">Casa</option>
+                <option value="ph">PH</option>
               </select>
             </div>
             <button className="search-btn" onClick={handleBuscar}>
@@ -115,7 +116,9 @@ export default function Home() {
             <div className="hero-stat-divider" />
             <div className="hero-stat"><strong>+1.500</strong><span>Clientes satisfechos</span></div>
             <div className="hero-stat-divider" />
-            <div className="hero-stat"><strong>10 años</strong><span>De experiencia</span></div>
+            <div className="hero-stat"><strong>+20 años</strong><span>De experiencia</span></div>
+            <div className="hero-stat-divider" />
+            <div className="hero-stat"><strong>+500</strong><span>Operaciones cerradas</span></div>
           </div>
         </div>
         <div className="hero-dots">
@@ -129,22 +132,101 @@ export default function Home() {
       <section className="categorias">
         <div className="container">
           <div className="categorias-grid">
-            {[
-              { icon: 'fa-building', label: 'Departamentos', tipo: 'departamento' },
-              { icon: 'fa-house', label: 'Casas', tipo: 'casa' },
-              { icon: 'fa-building-columns', label: 'PH', tipo: 'ph' },
-            ].map(c => (
-              <Link key={c.tipo} to={`/propiedades?tipo=${c.tipo}`} className="categoria-card fade-up">
-                <div className="cat-icon"><i className={`fa-solid ${c.icon}`} /></div>
-                <h3>{c.label}</h3>
-                <span className="cat-link">Ver disponibles <i className="fa-solid fa-arrow-right" /></span>
-              </Link>
-            ))}
-            <Link to="/propiedades" className="categoria-card categoria-card--accent fade-up">
-              <div className="cat-icon"><i className="fa-solid fa-star" /></div>
-              <h3>Destacadas</h3>
-              <span className="cat-link">Ver todas <i className="fa-solid fa-arrow-right" /></span>
+            <Link to="/propiedades?operacion=alquiler" className="categoria-card fade-up">
+              <div className="cat-icon"><i className="fa-solid fa-key" /></div>
+              <h3>Alquiler</h3>
+              <span className="cat-link">Ver disponibles <i className="fa-solid fa-arrow-right" /></span>
             </Link>
+            <Link to="/propiedades?operacion=venta" className="categoria-card fade-up">
+              <div className="cat-icon"><i className="fa-solid fa-handshake" /></div>
+              <h3>Venta</h3>
+              <span className="cat-link">Ver en venta <i className="fa-solid fa-arrow-right" /></span>
+            </Link>
+            <a href="/#servicios" className="categoria-card fade-up">
+              <div className="cat-icon"><i className="fa-solid fa-calculator" /></div>
+              <h3>Tasación</h3>
+              <span className="cat-link">Más información <i className="fa-solid fa-arrow-right" /></span>
+            </a>
+            <Link to="/propiedades" className="categoria-card categoria-card--accent fade-up">
+              <div className="cat-icon"><i className="fa-solid fa-chart-line" /></div>
+              <h3>Inversión</h3>
+              <span className="cat-link">Consultanos <i className="fa-solid fa-arrow-right" /></span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* SERVICIOS */}
+      <section className="servicios" id="servicios">
+        <div className="container">
+          <div className="section-header section-header--center fade-up">
+            <div className="section-tag">Lo que hacemos</div>
+            <h2>Servicios integrales<br /><span>para cada necesidad</span></h2>
+          </div>
+          <div className="servicios-grid">
+            <div className="servicio-card fade-up">
+              <div className="servicio-icon servicio-icon--alquiler">
+                <i className="fa-solid fa-key" />
+              </div>
+              <h3>Alquiler</h3>
+              <p>Selecciona dentro de nuestro catalogo. Te acompañamos desde la búsqueda hasta la firma del contrato.</p>
+              <ul className="servicio-items">
+                <li><i className="fa-solid fa-check" /> Búsqueda personalizada</li>
+                <li><i className="fa-solid fa-check" /> Gestión documental completa</li>
+                <li><i className="fa-solid fa-check" /> Asesoramiento legal incluido</li>
+              </ul>
+              <Link to="/propiedades?operacion=alquiler" className="servicio-link">
+                Ver propiedades en alquiler <i className="fa-solid fa-arrow-right" />
+              </Link>
+            </div>
+
+            <div className="servicio-card fade-up">
+              <div className="servicio-icon servicio-icon--venta">
+                <i className="fa-solid fa-handshake" />
+              </div>
+              <h3>Compra y Venta</h3>
+              <p>Te orientamos y asesoramos en cada paso del proceso de tu compra/venta de una propiedad.</p>
+              <ul className="servicio-items">
+                <li><i className="fa-solid fa-check" /> Tasación del inmueble</li>
+                <li><i className="fa-solid fa-check" /> Estrategia de publicación</li>
+                <li><i className="fa-solid fa-check" /> Acompañamiento en escritura</li>
+              </ul>
+              <Link to="/propiedades?operacion=venta" className="servicio-link">
+                Ver propiedades en venta <i className="fa-solid fa-arrow-right" />
+              </Link>
+            </div>
+
+            <div className="servicio-card fade-up">
+              <div className="servicio-icon servicio-icon--tasacion">
+                <i className="fa-solid fa-calculator" />
+              </div>
+              <h3>Tasación Gratuita</h3>
+              <p>¿Querés saber cuánto vale tu propiedad hoy? Te realizamos una tasación profesional sin costo, con análisis del mercado actualizado.</p>
+              <ul className="servicio-items">
+                <li><i className="fa-solid fa-check" /> Valuación de mercado</li>
+                <li><i className="fa-solid fa-check" /> Análisis de zona y comparables</li>
+                <li><i className="fa-solid fa-check" /> Informe detallado</li>
+              </ul>
+              <a href="#contacto" className="servicio-link">
+                Solicitar tasación gratuita <i className="fa-solid fa-arrow-right" />
+              </a>
+            </div>
+
+            <div className="servicio-card fade-up">
+              <div className="servicio-icon servicio-icon--inversion">
+                <i className="fa-solid fa-chart-line" />
+              </div>
+              <h3>Inversión Inmobiliaria</h3>
+              <p>Te asesoramos para invertir en ladrillos con criterio. Identificamos las mejores oportunidades del mercado para maximizar tu rentabilidad.</p>
+              <ul className="servicio-items">
+                <li><i className="fa-solid fa-check" /> Análisis de rentabilidad</li>
+                <li><i className="fa-solid fa-check" /> Selección de activos</li>
+                <li><i className="fa-solid fa-check" /> Seguimiento post-inversión</li>
+              </ul>
+              <a href="#contacto" className="servicio-link">
+                Consultá nuestros asesores <i className="fa-solid fa-arrow-right" />
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -155,7 +237,7 @@ export default function Home() {
           <div className="section-header">
             <div>
               <div className="section-tag">Propiedades destacadas</div>
-              <h2>Las mejores opciones<br /><span>para alquilar hoy</span></h2>
+              <h2>Las mejores opciones<br /><span>del momento</span></h2>
             </div>
             <Link to="/propiedades" className="ver-todas-link">
               Ver todas <i className="fa-solid fa-arrow-right" />
@@ -177,8 +259,8 @@ export default function Home() {
         <div className="container">
           <div className="nosotros-grid">
             <div className="nosotros-imgs">
-              <img className="img-grande" src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=700" alt="Equipo" />
-              <img className="img-chica" src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400" alt="Propiedad" />
+              <img className="img-grande" src="#" alt="Equipo" />
+              <img className="img-chica" src="#" alt="Propiedad" />
               <div className="nosotros-badge">
                 <strong>20+</strong>
                 <span>Años de<br />experiencia</span>
@@ -187,8 +269,6 @@ export default function Home() {
             <div className="nosotros-content">
               <div className="section-tag">¿Quiénes somos?</div>
               <h2>Una inmobiliaria que<br /><span>trabaja para vos</span></h2>
-              <p>Somos un equipo de profesionales apasionados por el mercado inmobiliario argentino. Nuestra misión es conectar a las personas con el hogar ideal, brindando un servicio transparente, ágil y personalizado.</p>
-              <p>Con más de 10 años de experiencia y cientos de familias que ya encontraron su lugar, sabemos que cada búsqueda es única.</p>
               <div className="nosotros-items">
                 {['Propiedades verificadas', 'Atención personalizada', 'Trámites rápidos y seguros', 'Asesoramiento legal incluido'].map(item => (
                   <div key={item} className="nosotros-item">
@@ -207,14 +287,14 @@ export default function Home() {
         <div className="container">
           <div className="section-header section-header--center">
             <div className="section-tag">Proceso simple</div>
-            <h2>¿Cómo alquilar con nosotros?</h2>
+            <h2>¿Cómo trabajamos<br /><span>con vos?</span></h2>
           </div>
           <div className="pasos-grid">
             {[
-              { num: '01', icon: 'fa-magnifying-glass', title: 'Buscá tu propiedad', desc: 'Explorá nuestro catálogo y filtrá por zona, tipo, precio y más.' },
-              { num: '02', icon: 'fa-calendar-check', title: 'Coordiná una visita', desc: 'Contactanos y te organizamos una visita en el horario que mejor te quede.' },
-              { num: '03', icon: 'fa-file-signature', title: 'Firmá el contrato', desc: 'Nuestro equipo legal te acompaña en cada paso del proceso de alquiler.' },
-              { num: '04', icon: 'fa-key', title: '¡Recibí las llaves!', desc: 'Mudarte es más fácil cuando tenés el equipo correcto de tu lado.' },
+              { num: '01', icon: 'fa-comments', title: 'Primera consulta', desc: 'Nos contás qué buscás o qué necesitás: alquilar, comprar, vender o tasar.' },
+              { num: '02', icon: 'fa-magnifying-glass', title: 'Análisis y búsqueda', desc: 'Analizamos el mercado y te presentamos las opciones más convenientes para tu caso.' },
+              { num: '03', icon: 'fa-calendar-check', title: 'Visitas y negociación', desc: 'Coordinamos visitas y te acompañamos en cada etapa de la negociación.' },
+              { num: '04', icon: 'fa-file-signature', title: 'Cierre seguro', desc: 'Gestionamos toda la documentación para que tu operación sea rápida y sin inconvenientes.' },
             ].map((paso, i, arr) => (
               <>
                 <div key={paso.num} className="paso fade-up">
@@ -235,12 +315,12 @@ export default function Home() {
         <div className="cta-bg" />
         <div className="container cta-content">
           <div className="cta-text">
-            <h2>¿Tenés una propiedad<br />para alquilar?</h2>
-            <p>Sumá tu propiedad a nuestro catálogo y llegá a miles de personas que buscan alquilar hoy.</p>
+            <h2>¿Querés vender o alquilar<br />tu propiedad?</h2>
+            <p>Sumá tu inmueble a nuestra cartera. Te hacemos una tasación gratuita y nos encargamos de todo.</p>
           </div>
           <div className="cta-actions">
-            <a href="#contacto" className="btn-primary">Publicar mi propiedad</a>
-            <Link to="/propiedades" className="btn-outline-white">Ver propiedades</Link>
+            <a href="#contacto" className="btn-primary">Quiero tasar mi propiedad</a>
+            <a href="/#servicios" className="btn-outline-white">Ver nuestros servicios</a>
           </div>
         </div>
       </section>
@@ -270,9 +350,9 @@ export default function Home() {
                 ))}
               </div>
               <div className="social-row">
-                <a href="#" className="social-btn"><i className="fa-brands fa-instagram" /></a>
-                <a href="#" className="social-btn"><i className="fa-brands fa-facebook-f" /></a>
-                <a href="#" className="social-btn"><i className="fa-brands fa-whatsapp" /></a>
+                <a href="https://www.instagram.com/calvinotabuada/" className="social-btn"><i className="fa-brands fa-instagram" /></a>
+                <a href="https://www.facebook.com/inmobiliaria2804" className="social-btn"><i className="fa-brands fa-facebook-f" /></a>
+                <a href="https://wa.me/5491145713005" className="social-btn"><i className="fa-brands fa-whatsapp" /></a>
               </div>
             </div>
 
@@ -297,7 +377,10 @@ export default function Home() {
                   <select>
                     <option>Consulta general</option>
                     <option>Quiero alquilar</option>
-                    <option>Publicar propiedad</option>
+                    <option>Quiero comprar</option>
+                    <option>Quiero vender</option>
+                    <option>Solicitar tasación gratuita</option>
+                    <option>Consulta de inversión</option>
                     <option>Otro</option>
                   </select>
                 </div>

@@ -21,12 +21,12 @@ export default function Navbar() {
         <ul className={`nav-links${menuOpen ? ' open' : ''}`}>
           <li><NavLink to="/" end onClick={() => setMenuOpen(false)}>Inicio</NavLink></li>
           <li><NavLink to="/propiedades" onClick={() => setMenuOpen(false)}>Propiedades</NavLink></li>
+          <li><a href="/#servicios" onClick={() => setMenuOpen(false)}>Servicios</a></li>
           <li><a href="/#nosotros" onClick={() => setMenuOpen(false)}>Nosotros</a></li>
           <li><a href="/#contacto" onClick={() => setMenuOpen(false)}>Contacto</a></li>
         </ul>
 
         <div className="nav-actions">
-          <Link to="/propiedades" className="nav-cta">Ver Propiedades</Link>
           <button className="hamburger" onClick={() => setMenuOpen(o => !o)}>
             <span /><span /><span />
           </button>
