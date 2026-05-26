@@ -1,50 +1,57 @@
-import { createContext, useContext, useState } from 'react'
-import initialListings from '../data/listings.json'
-
-const STORAGE_KEY = 'propiedades_data'
+import { createContext, useContext, useState, useEffect } from 'react'
+import { db } from '../firebase'
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from 'firebase/firestore'
 
 const ListingsContext = createContext(null)
 
-function loadListings() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) return JSON.parse(stored)
-  } catch { /* noop */ }
-  return initialListings
-}
-
-function saveListings(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-}
-
 export function ListingsProvider({ children }) {
-  const [listings, setListings] = useState(loadListings)
+  const [listings, setListings] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const updateListings = (next) => {
-    setListings(next)
-    saveListings(next)
-  }
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'propiedades'), (snapshot) => {
+      const data = snapshot.docs.map(d => ({ ...d.data(), _docId: d.id }))
+      data.sort((a, b) => a.id - b.id)
+      setListings(data)
+      setLoading(false)
+    })
+    return unsub
+  }, [])
 
-  const addPropiedad = (propiedad) => {
+  const addPropiedad = async (propiedad) => {
     const nextId = listings.length > 0 ? Math.max(...listings.map(p => p.id)) + 1 : 1
-    const nueva = { ...propiedad, id: nextId }
-    updateListings([...listings, nueva])
+    await addDoc(collection(db, 'propiedades'), { ...propiedad, id: nextId })
   }
 
-  const updatePropiedad = (id, datos) => {
-    updateListings(listings.map(p => p.id === id ? { ...p, ...datos } : p))
+  const updatePropiedad = async (id, datos) => {
+    const prop = listings.find(p => p.id === id)
+    if (!prop) return
+    await updateDoc(doc(db, 'propiedades', prop._docId), datos)
   }
 
-  const deletePropiedad = (id) => {
-    updateListings(listings.filter(p => p.id !== id))
+  const deletePropiedad = async (id) => {
+    const prop = listings.find(p => p.id === id)
+    if (!prop) return
+    await deleteDoc(doc(db, 'propiedades', prop._docId))
   }
 
-  const toggleDisponible = (id) => {
-    updateListings(listings.map(p => p.id === id ? { ...p, disponible: !p.disponible } : p))
+  const toggleDisponible = async (id) => {
+    const prop = listings.find(p => p.id === id)
+    if (!prop) return
+    await updateDoc(doc(db, 'propiedades', prop._docId), { disponible: !prop.disponible })
   }
 
-  const toggleDestacada = (id) => {
-    updateListings(listings.map(p => p.id === id ? { ...p, destacada: !p.destacada } : p))
+  const toggleDestacada = async (id) => {
+    const prop = listings.find(p => p.id === id)
+    if (!prop) return
+    await updateDoc(doc(db, 'propiedades', prop._docId), { destacada: !prop.destacada })
   }
 
   // Solo las disponibles para usuarios normales
@@ -59,6 +66,7 @@ export function ListingsProvider({ children }) {
       deletePropiedad,
       toggleDisponible,
       toggleDestacada,
+      loading,
     }}>
       {children}
     </ListingsContext.Provider>

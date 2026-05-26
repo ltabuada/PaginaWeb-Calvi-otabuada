@@ -104,6 +104,11 @@ export default function Home() {
                 <option value="departamento">Departamento</option>
                 <option value="casa">Casa</option>
                 <option value="ph">PH</option>
+                <option value="terreno">Terreno</option>
+                <option value="galpon">Galpón</option>
+                <option value="local">Local</option>
+                <option value="oficina">Oficina</option>
+                <option value="otros">Otros</option>
               </select>
             </div>
             <button className="search-btn" onClick={handleBuscar}>
@@ -112,13 +117,9 @@ export default function Home() {
           </div>
 
           <div className="hero-stats">
-            <div className="hero-stat"><strong>+200</strong><span>Propiedades</span></div>
+            <div className="hero-stat"><strong>+35 años</strong><span>De experiencia</span></div>
             <div className="hero-stat-divider" />
-            <div className="hero-stat"><strong>+1.500</strong><span>Clientes satisfechos</span></div>
-            <div className="hero-stat-divider" />
-            <div className="hero-stat"><strong>+20 años</strong><span>De experiencia</span></div>
-            <div className="hero-stat-divider" />
-            <div className="hero-stat"><strong>+500</strong><span>Operaciones cerradas</span></div>
+            <div className="hero-stat"><strong>+120</strong><span>Obras comercializadas</span></div>
           </div>
         </div>
         <div className="hero-dots">
@@ -231,6 +232,45 @@ export default function Home() {
         </div>
       </section>
 
+      {/* EMPRENDIMIENTOS */}
+      <section className="emprendimientos-section" id="emprendimientos">
+        <div className="container">
+          <div className="emprendimientos-inner fade-up">
+            <div className="emprendimientos-text">
+              <div className="section-tag">Proyectos en desarrollo</div>
+              <h2>Emprendimientos<br /><span>inmobiliarios</span></h2>
+              <p>Invertí desde el pozo en proyectos seleccionados. Te acompañamos en cada etapa: desde la elección de la unidad hasta la escrituración. Accedé a las mejores condiciones de pago y financiamiento directo con el desarrollador.</p>
+              <ul className="emprendimientos-beneficios">
+                <li><i className="fa-solid fa-circle-check" /> Precio de lanzamiento</li>
+                <li><i className="fa-solid fa-circle-check" /> Financiación directa</li>
+                <li><i className="fa-solid fa-circle-check" /> Alta rentabilidad proyectada</li>
+                <li><i className="fa-solid fa-circle-check" /> Acompañamiento integral</li>
+              </ul>
+              <Link to="/emprendimientos" className="btn-primary">
+                Ver emprendimientos vigentes <i className="fa-solid fa-arrow-right" />
+              </Link>
+            </div>
+            <div className="emprendimientos-visual">
+              <div className="emp-card fade-up">
+                <div className="emp-card-icon"><i className="fa-solid fa-building-columns" /></div>
+                <strong>Inversión desde el pozo</strong>
+                <span>Las mejores unidades al precio más bajo</span>
+              </div>
+              <div className="emp-card fade-up">
+                <div className="emp-card-icon"><i className="fa-solid fa-file-contract" /></div>
+                <strong>Gestión completa</strong>
+                <span>Nos encargamos de toda la documentación</span>
+              </div>
+              <div className="emp-card fade-up">
+                <div className="emp-card-icon"><i className="fa-solid fa-chart-line" /></div>
+                <strong>Rentabilidad garantizada</strong>
+                <span>Proyectos con alta demanda de alquiler</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* DESTACADAS */}
       <section className="destacadas" id="destacadas">
         <div className="container">
@@ -262,7 +302,7 @@ export default function Home() {
               <img className="img-grande" src="#" alt="Equipo" />
               <img className="img-chica" src="#" alt="Propiedad" />
               <div className="nosotros-badge">
-                <strong>20+</strong>
+                <strong>35+</strong>
                 <span>Años de<br />experiencia</span>
               </div>
             </div>

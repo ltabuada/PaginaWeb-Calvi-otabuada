@@ -61,9 +61,14 @@ export default function Listings() {
             <label>Tipo</label>
             <select value={filtroTipo} onChange={e => setFiltroTipo(e.target.value)}>
               <option value="">Todos</option>
-              <option value="casa">Casa</option>
               <option value="departamento">Departamento</option>
+              <option value="casa">Casa</option>
               <option value="ph">PH</option>
+              <option value="terreno">Terreno</option>
+              <option value="galpon">Galpón</option>
+              <option value="local">Local</option>
+              <option value="oficina">Oficina</option>
+              <option value="otros">Otros</option>
             </select>
           </div>
           <div className="filtro-group">
