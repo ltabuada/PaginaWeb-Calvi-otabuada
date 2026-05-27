@@ -13,7 +13,8 @@ const EMPTY_FORM = {
   ambientes: '',
   dormitorios: '',
   banos: '',
-  superficie: '',
+  cocheras: '',
+  superficie: ''
   expensas: '',
   descripcion: '',
   imagenes: '',
@@ -358,6 +359,10 @@ export default function AdminPanel() {
                   <div className="form-field">
                     <label>Baños *</label>
                     <input name="banos" type="number" min="1" max="10" value={form.banos} onChange={handleChange} placeholder="1" required />
+                  </div>
+                  <div className="form-field">
+                    <label>Cocheras</label>
+                    <input name="cocheras" type="number" min="0" max="10" value={form.cocheras} onChange={handleChange} placeholder="0" />
                   </div>
                   <div className="form-field">
                     <label>Superficie (m²) *</label>

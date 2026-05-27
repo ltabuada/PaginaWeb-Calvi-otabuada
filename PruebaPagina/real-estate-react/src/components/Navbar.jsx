@@ -15,7 +15,6 @@ export default function Navbar() {
     <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
       <div className="nav-container">
         <Link to="/" className="nav-logo">
-          <img src="/logoLargo.png" alt="Logo" onError={e => { e.target.style.display='none' }}/>
         </Link>
 
         <ul className={`nav-links${menuOpen ? ' open' : ''}`}>

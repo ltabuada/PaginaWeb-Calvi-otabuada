@@ -76,7 +76,20 @@ export default function Home() {
           <div className="hero-tag">
             <span className="dot" /> Alquiler · Venta · Inversión
           </div>
-          <h1>Tu inmobiliaria<br /><span className="highlight">de confianza</span></h1>
+
+          <img
+            src="/LogoInicio.png"
+            alt="Calvi Propiedades"
+            style={{
+              width: '100%',
+              maxWidth: '860px',
+              height: 'clamp(7rem, 16.5vw, 14.3rem)',
+              objectFit: 'contain',
+              display: 'block',
+              margin: '0 auto 1.2rem',
+            }}
+          />
+
           <p>Alquilá, comprá, vendé o tasá tu propiedad con nuestro respaldo</p>
 
           <div className="hero-search">
@@ -100,7 +113,7 @@ export default function Home() {
             <div className="search-field">
               <i className="fa-solid fa-home" />
               <select value={ambientes} onChange={e => setAmbientes(e.target.value)}>
-                <option value="">Tipo de propiedad</option>
+                <option value="">Propiedad</option>
                 <option value="departamento">Departamento</option>
                 <option value="casa">Casa</option>
                 <option value="ph">PH</option>
@@ -299,8 +312,10 @@ export default function Home() {
         <div className="container">
           <div className="nosotros-grid">
             <div className="nosotros-imgs">
-              <img className="img-grande" src="#" alt="Equipo" />
-              <img className="img-chica" src="#" alt="Propiedad" />
+              <div className="img-grande-wrapper">
+                <img className="img-grande" src="/Frente.jpeg" alt="Frente" />
+              </div>
+              <img className="img-chica" src="/LogoCircular.jpeg" alt="Logo Circular" />
               <div className="nosotros-badge">
                 <strong>35+</strong>
                 <span>Años de<br />experiencia</span>

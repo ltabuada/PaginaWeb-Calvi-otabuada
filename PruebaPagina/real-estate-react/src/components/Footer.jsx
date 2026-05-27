@@ -6,8 +6,18 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
-            <img src="" alt="Logo" onError={e => { e.target.style.display='none' }}/>
-            <p>Tu inmobiliaria de confianza en Argentina. Encontrá el hogar ideal con nosotros.</p>
+            <div style={{
+              width: '160px', height: '60px', marginBottom: '1rem',
+              border: '2px dashed rgba(255,255,255,0.25)', borderRadius: '8px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              justifyContent: 'center', gap: '4px',
+              color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem',
+              letterSpacing: '1px', textTransform: 'uppercase',
+            }}>
+              <i className="fa-regular fa-image" style={{ fontSize: '1.1rem' }} />
+              <span>Logo aquí · 160×60 px</span>
+            </div>
+
             <div className="social-row">
               <a href="https://www.instagram.com/calvinotabuada/" className="social-btn social-btn--dark"><i className="fa-brands fa-instagram" /></a>
               <a href="https://www.facebook.com/inmobiliaria2804" className="social-btn social-btn--dark"><i className="fa-brands fa-facebook-f" /></a>

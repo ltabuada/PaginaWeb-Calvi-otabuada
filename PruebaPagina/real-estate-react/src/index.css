@@ -90,7 +90,7 @@ body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(
 }
 .hero-content {
   position: relative; z-index: 1;
-  text-align: center; max-width: 860px; margin: 0 auto;
+  text-align: center; max-width: 1300px; margin: 0 auto;
 }
 .hero-tag {
   display: inline-flex; align-items: center; gap: 8px;
@@ -105,7 +105,7 @@ body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(
 }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 .hero-content h1 {
-  font-size: clamp(2.4rem, 5.5vw, 4.8rem);
+  font-size: clamp(3.2rem, 7.5vw, 6.5rem);
   font-weight: 900; color: white; line-height: 1.1; margin-bottom: 1.2rem;
 }
 .hero-content h1 .highlight { color: var(--accent); }
@@ -123,7 +123,7 @@ body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(
 }
 .search-field {
   display: flex; align-items: center; gap: 10px;
-  padding: 8px 20px; flex: 1;
+  padding: 8px 20px; flex: 1; min-width: 140px;
 }
 .search-field i { color: var(--primary); font-size: 0.95rem; flex-shrink: 0; }
 .search-field input, .search-field select {
@@ -399,8 +399,9 @@ section { padding: 80px 0; }
 .nosotros { background: white; }
 .nosotros-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
 .nosotros-imgs { position: relative; height: 480px; }
-.img-grande { position: absolute; top: 0; left: 0; width: 80%; height: 85%; object-fit: cover; border-radius: var(--radius); box-shadow: var(--shadow-hover); }
-.img-chica { position: absolute; bottom: 0; right: 0; width: 55%; height: 50%; object-fit: cover; border-radius: var(--radius); box-shadow: var(--shadow-hover); border: 5px solid white; }
+.img-grande-wrapper { position: absolute; top: 0; left: 0; width: 80%; height: 85%; border-radius: var(--radius); box-shadow: var(--shadow-hover); overflow: hidden; }
+.img-grande { width: 100%; height: 100%; object-fit: cover; object-position: center 50%; transform: scale(1.55); transform-origin: center center; display: block; }
+.img-chica { position: absolute; bottom: 0; right: 0; width: 220px; height: 220px; object-fit: cover; border-radius: 50%; box-shadow: var(--shadow-hover); border: 5px solid white; }
 .nosotros-badge {
   position: absolute; top: 40%; left: 72%;
   background: var(--accent); color: var(--dark);
@@ -516,6 +517,7 @@ section { padding: 80px 0; }
 .footer { background: var(--dark); padding: 60px 0 0; }
 .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; padding-bottom: 3rem; }
 .footer-brand img { height: 44px; margin-bottom: 1rem; }
+.footer-logo { display: block !important; height: 80px !important; width: auto !important; object-fit: contain; margin-bottom: 1rem; }
 .footer-brand p { color: rgba(255,255,255,0.45); font-size: 0.85rem; line-height: 1.7; margin-bottom: 1.5rem; }
 .footer-col h4 { color: white; font-weight: 700; margin-bottom: 1.2rem; font-size: 0.9rem; }
 .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
