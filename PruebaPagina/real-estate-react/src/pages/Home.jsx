@@ -4,15 +4,17 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import PropiedadCard from '../components/PropiedadCard'
 import { useListings } from '../context/ListingsContext'
+import { useConsultas } from '../context/ConsultasContext'
 
 const SLIDES = [
   'https://imgar.zonapropcdn.com/avisos/resize/1/00/58/97/12/19/1200x1200/2049202376.jpg?isFirstImage=true',
   '/fotoSlide.jpeg',
-  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1800',
+  '',
 ]
 
 export default function Home() {
   const { listingsPublicos } = useListings()
+  const { addConsulta } = useConsultas()
   const navigate = useNavigate()
   const [slide, setSlide] = useState(0)
   const [buscar, setBuscar] = useState('')
@@ -50,8 +52,17 @@ export default function Home() {
     navigate(`/propiedades${params.toString() ? '?' + params.toString() : ''}`)
   }
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault()
+    const fd = new FormData(e.target)
+    await addConsulta({
+      tipo: 'general',
+      nombre: fd.get('nombre') || '',
+      email: fd.get('email') || '',
+      telefono: fd.get('telefono') || '',
+      asunto: fd.get('asunto') || 'Consulta general',
+      mensaje: fd.get('mensaje') || '',
+    })
     setFormSent(true)
     setTimeout(() => { setFormSent(false); e.target.reset() }, 3000)
   }
@@ -161,7 +172,7 @@ export default function Home() {
               <h3>Tasación</h3>
               <span className="cat-link">Más información <i className="fa-solid fa-arrow-right" /></span>
             </a>
-            <Link to="/propiedades" className="categoria-card categoria-card--accent fade-up">
+            <Link to="/propiedades" className="categoria-card fade-up">
               <div className="cat-icon"><i className="fa-solid fa-chart-line" /></div>
               <h3>Inversión</h3>
               <span className="cat-link">Consultanos <i className="fa-solid fa-arrow-right" /></span>
@@ -415,21 +426,21 @@ export default function Home() {
               <div className="form-row">
                 <div className="form-group">
                   <label>Nombre completo</label>
-                  <input type="text" placeholder="Tu nombre" required />
+                  <input name="nombre" type="text" placeholder="Tu nombre" required />
                 </div>
                 <div className="form-group">
                   <label>Email</label>
-                  <input type="email" placeholder="ejemplo@email.com" required />
+                  <input name="email" type="email" placeholder="ejemplo@email.com" required />
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group">
                   <label>Teléfono</label>
-                  <input type="tel" placeholder="+54 11 ...." />
+                  <input name="telefono" type="tel" placeholder="+54 11 ...." />
                 </div>
                 <div className="form-group">
                   <label>Asunto</label>
-                  <select>
+                  <select name="asunto">
                     <option>Consulta general</option>
                     <option>Quiero alquilar</option>
                     <option>Quiero comprar</option>
@@ -442,7 +453,7 @@ export default function Home() {
               </div>
               <div className="form-group">
                 <label>Mensaje</label>
-                <textarea rows="5" placeholder="Escribí tu consulta acá..." required />
+                <textarea name="mensaje" rows="5" placeholder="Escribi tu consulta acá..." required />
               </div>
               <button type="submit" className="btn-primary btn-full"
                 style={formSent ? { background: 'linear-gradient(135deg,#22c55e,#16a34a)' } : {}}>

@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import MapView from '../components/MapView'
 import { useListings } from '../context/ListingsContext'
+import { useConsultas } from '../context/ConsultasContext'
 
 export default function ListingDetail() {
   const { id } = useParams()
@@ -13,6 +15,7 @@ export default function ListingDetail() {
   const [modalOpen, setModalOpen] = useState(false)
   const [imgActual, setImgActual] = useState(0)
   const [formSent, setFormSent] = useState(false)
+  const { addConsulta } = useConsultas()
 
   useEffect(() => {
     if (!propiedad) navigate('/propiedades')
@@ -48,9 +51,20 @@ export default function ListingDetail() {
 
   const precio = new Intl.NumberFormat('es-AR').format(propiedad.precio)
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault()
+    const fd = new FormData(e.target)
+    await addConsulta({
+      tipo: 'propiedad',
+      nombre: fd.get('nombre') || '',
+      email: fd.get('email') || '',
+      telefono: fd.get('telefono') || '',
+      mensaje: fd.get('mensaje') || '',
+      propiedadId: propiedad.id,
+      propiedadTitulo: propiedad.titulo,
+    })
     setFormSent(true)
+    e.target.reset()
     setTimeout(() => setFormSent(false), 3000)
   }
 
@@ -91,7 +105,7 @@ export default function ListingDetail() {
           <div className="detail-info">
             <div className="detail-precio-row">
               <div className="detail-precio">${precio}</div>
-              <div className="detail-precio-mes">/mes</div>
+              {propiedad.operacion === 'alquiler' && <div className="detail-precio-mes">/mes</div>}
             </div>
             {propiedad.expensas > 0
               ? <p style={{ color: 'var(--text-light)', fontSize: '.85rem', marginTop: '.3rem' }}>
@@ -127,13 +141,13 @@ export default function ListingDetail() {
               <h3>¿Te interesa esta propiedad?</h3>
               <p>Contactanos y te responderemos a la brevedad.</p>
               <div className="precio-sidebar">
-                <strong>${precio}</strong><span>/mes</span>
+                <strong>${precio}</strong>{propiedad.operacion === 'alquiler' && <span>/mes</span>}
               </div>
               <form className="form-contacto" onSubmit={handleFormSubmit}>
-                <input type="text" placeholder="Tu nombre" required />
-                <input type="email" placeholder="Tu email" required />
-                <input type="tel" placeholder="Tu teléfono" />
-                <textarea rows="3" defaultValue={`Hola, me interesa la propiedad "${propiedad.titulo}". ¿Podrían contactarme?`} />
+                <input name="nombre" type="text" placeholder="Tu nombre" required />
+                <input name="email" type="email" placeholder="Tu email" required />
+                <input name="telefono" type="tel" placeholder="Tu teléfono" />
+                <textarea name="mensaje" rows="3" defaultValue={`Hola, me interesa la propiedad "${propiedad.titulo}". ¿Podrían contactarme?`} />
                 <button type="submit" className="btn-primary"
                   style={formSent ? { background: 'linear-gradient(135deg,#22c55e,#16a34a)', color: 'white' } : {}}>
                   {formSent
@@ -147,6 +161,15 @@ export default function ListingDetail() {
               </form>
             </div>
           </div>
+        </div>
+
+        {/* MAPA */}
+        <div className="detail-map-section">
+          <h3 className="detail-map-title">
+            <i className="fa-solid fa-location-dot" /> Ubicación
+          </h3>
+          <p className="detail-map-address">{propiedad.ubicacion}</p>
+          <MapView address={propiedad.ubicacion} height="380px" />
         </div>
       </section>
 

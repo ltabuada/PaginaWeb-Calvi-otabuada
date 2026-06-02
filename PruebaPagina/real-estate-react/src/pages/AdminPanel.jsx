@@ -1,8 +1,13 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useListings } from '../context/ListingsContext'
 import { useEmprendimientos } from '../context/EmprendimientosContext'
+import { useConsultas } from '../context/ConsultasContext'
+import { storage } from '../firebase'
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import MapView from '../components/MapView'
+import LocationAutocomplete from '../components/LocationAutocomplete'
 
 const EMPTY_FORM = {
   tipo: 'departamento',
@@ -14,7 +19,7 @@ const EMPTY_FORM = {
   dormitorios: '',
   banos: '',
   cocheras: '',
-  superficie: ''
+  superficie: '',
   expensas: '',
   descripcion: '',
   imagenes: '',
@@ -39,6 +44,7 @@ export default function AdminPanel() {
   const { logout } = useAuth()
   const { listings, addPropiedad, updatePropiedad, deletePropiedad, toggleDisponible, toggleDestacada } = useListings()
   const { emprendimientos, addEmprendimiento, updateEmprendimiento, deleteEmprendimiento, toggleActivo } = useEmprendimientos()
+  const { consultas, marcarLeida, marcarRespondida, deleteConsulta, sinLeer } = useConsultas()
   const navigate = useNavigate()
 
   const [vista, setVista] = useState('lista')
@@ -50,10 +56,56 @@ export default function AdminPanel() {
   const [empForm, setEmpForm] = useState(EMPTY_EMP_FORM)
   const [empEditId, setEmpEditId] = useState(null)
   const [empConfirmDelete, setEmpConfirmDelete] = useState(null)
+  // Consultas
+  const [consultaFiltro, setConsultaFiltro] = useState('todas')
+  const [consultaConfirmDelete, setConsultaConfirmDelete] = useState(null)
+  // Upload
+  const [uploadingProp, setUploadingProp] = useState(false)
+  const [uploadingEmp, setUploadingEmp] = useState(false)
+  const [uploadProgressProp, setUploadProgressProp] = useState([])
+  const [uploadProgressEmp, setUploadProgressEmp] = useState([])
+  const fileInputPropRef = useRef(null)
+  const fileInputEmpRef = useRef(null)
 
   const showToast = (msg) => {
     setToast(msg)
     setTimeout(() => setToast(''), 2500)
+  }
+
+  const handleImageUpload = async (e, formSetter, setUploading, setProgress) => {
+    const files = Array.from(e.target.files)
+    if (!files.length) return
+    setUploading(true)
+    setProgress(files.map(f => ({ name: f.name, progress: 0, done: false })))
+    const uploadedUrls = []
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      const storageRef = ref(storage, `imagenes/${Date.now()}_${file.name}`)
+      await new Promise((resolve, reject) => {
+        const task = uploadBytesResumable(storageRef, file)
+        task.on(
+          'state_changed',
+          snap => {
+            const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100)
+            setProgress(prev => prev.map((p, idx) => idx === i ? { ...p, progress: pct } : p))
+          },
+          reject,
+          async () => {
+            const url = await getDownloadURL(task.snapshot.ref)
+            uploadedUrls.push(url)
+            setProgress(prev => prev.map((p, idx) => idx === i ? { ...p, progress: 100, done: true } : p))
+            resolve()
+          }
+        )
+      })
+    }
+    formSetter(f => ({
+      ...f,
+      imagenes: f.imagenes.trim() ? f.imagenes.trim() + '\n' + uploadedUrls.join('\n') : uploadedUrls.join('\n'),
+    }))
+    setUploading(false)
+    setProgress([])
+    e.target.value = ''
   }
 
   const handleLogout = () => {
@@ -187,6 +239,14 @@ export default function AdminPanel() {
           <button className="admin-nav-item" onClick={abrirNuevaEmp}>
             <i className="fa-solid fa-plus" /> Nuevo emprendimiento
           </button>
+          <div className="admin-nav-label">Consultas</div>
+          <button
+            className={`admin-nav-item${vista === 'consultas' ? ' active' : ''}`}
+            onClick={() => setVista('consultas')}
+          >
+            <i className="fa-solid fa-envelope" /> Consultas
+            {sinLeer > 0 && <span className="nav-badge">{sinLeer}</span>}
+          </button>
           <a href="/" className="admin-nav-item" target="_blank" rel="noreferrer">
             <i className="fa-solid fa-eye" /> Ver sitio
           </a>
@@ -312,7 +372,13 @@ export default function AdminPanel() {
                   </div>
                   <div className="form-field full">
                     <label>Ubicación *</label>
-                    <input name="ubicacion" value={form.ubicacion} onChange={handleChange} placeholder="Ej: Palermo, Buenos Aires" required />
+                    <LocationAutocomplete
+                      value={form.ubicacion}
+                      onChange={(val) => setForm(f => ({ ...f, ubicacion: val }))}
+                      placeholder="Ej: Av. Corrientes 1234, Buenos Aires"
+                      required
+                    />
+                    <MapView address={form.ubicacion} height="250px" />
                   </div>
                   <div className="form-field">
                     <label>Tipo *</label>
@@ -392,17 +458,45 @@ export default function AdminPanel() {
                 <h3><i className="fa-solid fa-images" /> Imágenes</h3>
                 <div className="form-grid">
                   <div className="form-field full">
-                    <label>URLs de imágenes (una por línea) *</label>
+                    <label>Subir imágenes desde tu dispositivo</label>
+                    <div className="upload-area" onClick={() => fileInputPropRef.current.click()}>
+                      <input
+                        ref={fileInputPropRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        style={{ display: 'none' }}
+                        onChange={e => handleImageUpload(e, setForm, setUploadingProp, setUploadProgressProp)}
+                      />
+                      <i className="fa-solid fa-cloud-arrow-up" />
+                      <span>{uploadingProp ? 'Subiendo...' : 'Hacé clic para seleccionar imágenes'}</span>
+                      <small>PNG, JPG, WEBP — múltiples archivos permitidos</small>
+                    </div>
+                    {uploadProgressProp.length > 0 && (
+                      <div className="upload-progress-list">
+                        {uploadProgressProp.map((f, i) => (
+                          <div key={i} className="upload-progress-item">
+                            <span className="upload-filename"><i className="fa-solid fa-image" /> {f.name}</span>
+                            <div className="upload-bar-wrap">
+                              <div className="upload-bar" style={{ width: `${f.progress}%` }} />
+                            </div>
+                            <span className="upload-pct">{f.done ? <i className="fa-solid fa-circle-check" style={{color:'var(--primary)'}} /> : `${f.progress}%`}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="form-field full">
+                    <label>O pegá URLs de imágenes (una por línea)</label>
                     <textarea
                       name="imagenes"
                       value={form.imagenes}
                       onChange={handleChange}
                       placeholder={"https://images.unsplash.com/photo-xxx?w=800\nhttps://images.unsplash.com/photo-yyy?w=800"}
                       rows={4}
-                      required
                     />
                     <span className="form-hint">
-                      <i className="fa-solid fa-circle-info" /> Podés usar URLs de Unsplash, Cloudinary, o cualquier imagen pública.
+                      <i className="fa-solid fa-circle-info" /> Las imágenes subidas se agregan automáticamente a esta lista.
                     </span>
                   </div>
                   {form.imagenes && (
@@ -545,7 +639,13 @@ export default function AdminPanel() {
                   </div>
                   <div className="form-field full">
                     <label>Ubicación *</label>
-                    <input name="ubicacion" value={empForm.ubicacion} onChange={handleChangeEmp} placeholder="Ej: Palermo, Buenos Aires" required />
+                    <LocationAutocomplete
+                      value={empForm.ubicacion}
+                      onChange={(val) => setEmpForm(f => ({ ...f, ubicacion: val }))}
+                      placeholder="Ej: Av. Corrientes 1234, Buenos Aires"
+                      required
+                    />
+                    <MapView address={empForm.ubicacion} height="250px" />
                   </div>
                   <div className="form-field">
                     <label>Estado *</label>
@@ -593,8 +693,40 @@ export default function AdminPanel() {
                 <h3><i className="fa-solid fa-images" /> Imágenes</h3>
                 <div className="form-grid">
                   <div className="form-field full">
-                    <label>URLs de imágenes (una por línea) *</label>
-                    <textarea name="imagenes" value={empForm.imagenes} onChange={handleChangeEmp} placeholder="https://..." rows={4} required />
+                    <label>Subir imágenes desde tu dispositivo</label>
+                    <div className="upload-area" onClick={() => fileInputEmpRef.current.click()}>
+                      <input
+                        ref={fileInputEmpRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        style={{ display: 'none' }}
+                        onChange={e => handleImageUpload(e, setEmpForm, setUploadingEmp, setUploadProgressEmp)}
+                      />
+                      <i className="fa-solid fa-cloud-arrow-up" />
+                      <span>{uploadingEmp ? 'Subiendo...' : 'Hacé clic para seleccionar imágenes'}</span>
+                      <small>PNG, JPG, WEBP — múltiples archivos permitidos</small>
+                    </div>
+                    {uploadProgressEmp.length > 0 && (
+                      <div className="upload-progress-list">
+                        {uploadProgressEmp.map((f, i) => (
+                          <div key={i} className="upload-progress-item">
+                            <span className="upload-filename"><i className="fa-solid fa-image" /> {f.name}</span>
+                            <div className="upload-bar-wrap">
+                              <div className="upload-bar" style={{ width: `${f.progress}%` }} />
+                            </div>
+                            <span className="upload-pct">{f.done ? <i className="fa-solid fa-circle-check" style={{color:'var(--primary)'}} /> : `${f.progress}%`}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="form-field full">
+                    <label>O pegá URLs de imágenes (una por línea)</label>
+                    <textarea name="imagenes" value={empForm.imagenes} onChange={handleChangeEmp} placeholder="https://..." rows={4} />
+                    <span className="form-hint">
+                      <i className="fa-solid fa-circle-info" /> Las imágenes subidas se agregan automáticamente a esta lista.
+                    </span>
                   </div>
                   {empForm.imagenes && (
                     <div className="form-field full">
@@ -628,6 +760,119 @@ export default function AdminPanel() {
             </form>
           </>
         )}
+
+        {/* ===== CONSULTAS ===== */}
+        {vista === 'consultas' && (() => {
+          const formatFecha = (ts) => {
+            if (!ts?.toDate) return '...'
+            return ts.toDate().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+          }
+          const lista = consultaFiltro === 'sin-leer'
+            ? consultas.filter(c => !c.leida)
+            : consultas
+          return (
+            <>
+              <div className="admin-page-header">
+                <div>
+                  <h1>Consultas</h1>
+                  <p>{consultas.length} consulta{consultas.length !== 1 ? 's' : ''} · {sinLeer} sin leer</p>
+                </div>
+              </div>
+
+              <div className="consultas-filtros">
+                <button
+                  className={`consulta-filtro-btn${consultaFiltro === 'todas' ? ' active' : ''}`}
+                  onClick={() => setConsultaFiltro('todas')}
+                >
+                  Todas ({consultas.length})
+                </button>
+                <button
+                  className={`consulta-filtro-btn${consultaFiltro === 'sin-leer' ? ' active' : ''}`}
+                  onClick={() => setConsultaFiltro('sin-leer')}
+                >
+                  Sin leer ({sinLeer})
+                </button>
+              </div>
+
+              {lista.length === 0 && (
+                <div className="consultas-empty">
+                  <i className="fa-solid fa-inbox" />
+                  <p>{consultaFiltro === 'sin-leer' ? 'No hay consultas sin leer.' : 'Aún no hay consultas.'}</p>
+                </div>
+              )}
+
+              <div className="consultas-list">
+                {lista.map(c => (
+                  <div key={c._docId} className={`consulta-card${!c.leida ? ' unread' : ''}`}>
+                    <div className="consulta-header">
+                      <div className="consulta-info">
+                        {!c.leida && <span className="unread-dot" />}
+                        <strong className="consulta-nombre">{c.nombre}</strong>
+                        <span className="consulta-tipo-badge consulta-tipo-{c.tipo}">
+                          {c.tipo === 'propiedad' ? <><i className="fa-solid fa-building" /> {c.propiedadTitulo}</> : <><i className="fa-solid fa-envelope" /> Consulta general</>}
+                        </span>
+                        {c.asunto && c.tipo === 'general' && (
+                          <span className="consulta-asunto">{c.asunto}</span>
+                        )}
+                      </div>
+                      <span className="consulta-fecha">{formatFecha(c.fecha)}</span>
+                    </div>
+
+                    <div className="consulta-contacto">
+                      <a href={`mailto:${c.email}`} className="consulta-email">
+                        <i className="fa-solid fa-envelope" /> {c.email}
+                      </a>
+                      {c.telefono && (
+                        <a href={`tel:${c.telefono}`} className="consulta-tel">
+                          <i className="fa-solid fa-phone" /> {c.telefono}
+                        </a>
+                      )}
+                    </div>
+
+                    <p className="consulta-mensaje">{c.mensaje}</p>
+
+                    <div className="consulta-actions">
+                      <a
+                        href={`mailto:${c.email}?subject=Re: ${c.tipo === 'propiedad' ? `Consulta sobre ${c.propiedadTitulo}` : c.asunto || 'Su consulta'}&body=Estimado/a ${c.nombre},%0A%0A`}
+                        className="admin-btn-primary consulta-btn"
+                        onClick={() => { if (!c.respondida) marcarRespondida(c._docId, false) }}
+                      >
+                        <i className="fa-solid fa-reply" /> Responder por email
+                      </a>
+                      <button
+                        className={`admin-btn-secondary consulta-btn${c.respondida ? ' respondida' : ''}`}
+                        onClick={() => marcarRespondida(c._docId, c.respondida)}
+                      >
+                        <i className={`fa-${c.respondida ? 'solid' : 'regular'} fa-circle-check`} />
+                        {c.respondida ? 'Respondida' : 'Marcar respondida'}
+                      </button>
+                      <button
+                        className={`admin-btn-secondary consulta-btn${c.leida ? '' : ' btn-leida'}`}
+                        onClick={() => marcarLeida(c._docId, c.leida)}
+                      >
+                        <i className={`fa-${c.leida ? 'regular' : 'solid'} fa-envelope${c.leida ? '-open' : ''}`} />
+                        {c.leida ? 'Marcar no leída' : 'Marcar leída'}
+                      </button>
+                      <button
+                        className="action-btn delete"
+                        onClick={() => setConsultaConfirmDelete(c._docId)}
+                        title="Eliminar"
+                      >
+                        <i className="fa-solid fa-trash" />
+                      </button>
+                    </div>
+
+                    {c.respondida && (
+                      <div className="consulta-respondida-badge">
+                        <i className="fa-solid fa-circle-check" /> Respondida
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )
+        })()}
       </main>
 
       {/* MODAL CONFIRMACIÓN ELIMINAR */}
@@ -663,6 +908,25 @@ export default function AdminPanel() {
             <div className="modal-actions">
               <button className="admin-btn-secondary" onClick={() => setEmpConfirmDelete(null)}>Cancelar</button>
               <button className="admin-btn-danger" onClick={() => handleConfirmDeleteEmp(empConfirmDelete)}>
+                <i className="fa-solid fa-trash" /> Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL ELIMINAR CONSULTA */}
+      {consultaConfirmDelete && (
+        <div className="admin-modal-overlay" onClick={() => setConsultaConfirmDelete(null)}>
+          <div className="admin-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-icon danger">
+              <i className="fa-solid fa-triangle-exclamation" />
+            </div>
+            <h3>¿Eliminar consulta?</h3>
+            <p>Esta acción no se puede deshacer.</p>
+            <div className="modal-actions">
+              <button className="admin-btn-secondary" onClick={() => setConsultaConfirmDelete(null)}>Cancelar</button>
+              <button className="admin-btn-danger" onClick={() => { deleteConsulta(consultaConfirmDelete); setConsultaConfirmDelete(null); showToast('Consulta eliminada.') }}>
                 <i className="fa-solid fa-trash" /> Eliminar
               </button>
             </div>
