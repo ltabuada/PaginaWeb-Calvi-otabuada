@@ -67,7 +67,13 @@ export default function Home() {
     setTimeout(() => { setFormSent(false); e.target.reset() }, 3000)
   }
 
-  const barrios = [...new Set(listingsPublicos.map(p => p.ubicacion.split(',')[0].trim()))].sort()
+  const barrios = [...new Set(
+    listingsPublicos.map(p => {
+      const parts = p.ubicacion.split(',').map(s => s.trim())
+      // Si el primer segmento tiene números (es una calle), tomar el siguiente
+      return parts.find(part => !/\d/.test(part)) || parts[0]
+    })
+  )].sort()
   const destacadas = listingsPublicos.filter(p => p.destacada).slice(0, 3)
 
   return (

@@ -91,14 +91,18 @@ export default function ListingDetail() {
         </div>
 
         {/* GALERÍA */}
+        {propiedad.imagenes?.length > 0 ? (
         <div className="galeria-principal">
           {propiedad.imagenes.slice(0, 4).map((img, i) => (
             <div key={i} className="galeria-img" onClick={() => { setImgActual(i); setModalOpen(true) }}>
-              <img src={img} alt={`${propiedad.titulo} - foto ${i + 1}`} />
+              <img src={img} alt={`${propiedad.titulo} - foto ${i + 1}`} onError={e => e.currentTarget.classList.add('no-img')} />
               <div className="overlay"><i className="fa-solid fa-expand" /></div>
             </div>
           ))}
         </div>
+        ) : (
+          <div className="galeria-sin-fotos"><i className="fa-solid fa-image" /> Sin fotos disponibles</div>
+        )}
 
         {/* CONTENIDO */}
         <div className="detail-main">
@@ -162,6 +166,20 @@ export default function ListingDetail() {
             </div>
           </div>
         </div>
+
+        {/* VIDEOS */}
+        {propiedad.videos && propiedad.videos.length > 0 && (
+          <div className="detail-videos-section">
+            <h3 className="detail-map-title">
+              <i className="fa-solid fa-video" /> Videos
+            </h3>
+            <div className="detail-videos-grid">
+              {propiedad.videos.map((url, i) => (
+                <video key={i} src={url} controls className="detail-video" />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* MAPA */}
         <div className="detail-map-section">

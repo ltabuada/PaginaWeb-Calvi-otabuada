@@ -9,6 +9,115 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import MapView from '../components/MapView'
 import LocationAutocomplete from '../components/LocationAutocomplete'
 
+const compressImage = (file, maxDim = 1920, quality = 0.8) =>
+  new Promise(resolve => {
+    if (!file.type.startsWith('image/')) { resolve(file); return }
+    const img = new Image()
+    const blobUrl = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(blobUrl)
+      const { width, height } = img
+      const scale = (width > maxDim || height > maxDim) ? maxDim / Math.max(width, height) : 1
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.round(width * scale)
+      canvas.height = Math.round(height * scale)
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+      // WebP pesa ~25-35% menos que JPEG; si el navegador no lo soporta, caemos a JPEG.
+      const supportsWebp = canvas.toDataURL('image/webp').startsWith('data:image/webp')
+      const type = supportsWebp ? 'image/webp' : 'image/jpeg'
+      const ext = supportsWebp ? '.webp' : '.jpg'
+      canvas.toBlob(
+        blob => {
+          if (!blob) { resolve(file); return }
+          resolve(new File([blob], file.name.replace(/\.[^.]+$/, ext), { type }))
+        },
+        type, quality
+      )
+    }
+    img.onerror = () => { URL.revokeObjectURL(blobUrl); resolve(file) }
+    img.src = blobUrl
+  })
+
+// Compresión de video en el navegador (MediaRecorder + canvas), sin dependencias.
+// Reescala a maxDim y recodifica a un bitrate objetivo, conservando el audio.
+// Es en tiempo real (reproduce el video para capturarlo), por eso reporta progreso.
+const compressVideo = (file, { maxDim = 1280, bitrate = 2_500_000, onProgress } = {}) =>
+  new Promise(resolve => {
+    const noSupport = typeof MediaRecorder === 'undefined' || !document.createElement('canvas').captureStream
+    if (!file.type.startsWith('video/') || noSupport) { resolve(file); return }
+
+    const video = document.createElement('video')
+    video.preload = 'auto'
+    video.playsInline = true
+    const blobUrl = URL.createObjectURL(file)
+    video.src = blobUrl
+
+    let audioCtx = null
+    const cleanup = () => {
+      URL.revokeObjectURL(blobUrl)
+      if (audioCtx) { try { audioCtx.close() } catch { /* noop */ } }
+    }
+    const bail = () => { cleanup(); resolve(file) }
+
+    video.onerror = bail
+    video.onloadedmetadata = () => {
+      const w = video.videoWidth, h = video.videoHeight
+      if (!w || !h) { bail(); return }
+
+      const candidates = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']
+      const mimeType = candidates.find(t => MediaRecorder.isTypeSupported(t))
+      if (!mimeType) { bail(); return }
+
+      const scale = (w > maxDim || h > maxDim) ? maxDim / Math.max(w, h) : 1
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.round(w * scale)
+      canvas.height = Math.round(h * scale)
+      const ctx = canvas.getContext('2d')
+
+      const canvasStream = canvas.captureStream(30)
+      const tracks = [...canvasStream.getVideoTracks()]
+
+      // Capturamos el audio vía Web Audio sin conectarlo a la salida → procesa en silencio.
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext
+        audioCtx = new AudioCtx()
+        const dest = audioCtx.createMediaStreamDestination()
+        audioCtx.createMediaElementSource(video).connect(dest)
+        tracks.push(...dest.stream.getAudioTracks())
+        audioCtx.resume?.()
+      } catch { /* video sin audio o no soportado */ }
+
+      let recorder
+      try {
+        recorder = new MediaRecorder(new MediaStream(tracks), { mimeType, videoBitsPerSecond: bitrate })
+      } catch { bail(); return }
+
+      const chunks = []
+      recorder.ondataavailable = e => { if (e.data?.size) chunks.push(e.data) }
+      recorder.onstop = () => {
+        cleanup()
+        const blob = new Blob(chunks, { type: mimeType })
+        // Si comprimir no ayudó (quedó más grande), subimos el original.
+        if (!blob.size || blob.size >= file.size) { resolve(file); return }
+        resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.webm'), { type: 'video/webm' }))
+      }
+
+      const draw = () => {
+        if (video.ended) return
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+        if (video.duration) onProgress?.(Math.min(99, Math.round((video.currentTime / video.duration) * 100)))
+        requestAnimationFrame(draw)
+      }
+      video.onended = () => { try { recorder.stop() } catch { /* noop */ } }
+
+      recorder.start()
+      video.play().then(() => requestAnimationFrame(draw)).catch(() => {
+        try { recorder.stop() } catch { /* noop */ }
+        bail()
+      })
+    }
+  })
+
 const EMPTY_FORM = {
   tipo: 'departamento',
   operacion: 'alquiler',
@@ -23,6 +132,7 @@ const EMPTY_FORM = {
   expensas: '',
   descripcion: '',
   imagenes: '',
+  videos: '',
   disponible: true,
   destacada: false,
 }
@@ -37,6 +147,7 @@ const EMPTY_EMP_FORM = {
   superficieDesde: '',
   entrega: '',
   imagenes: '',
+  videos: '',
   activo: true,
 }
 
@@ -64,47 +175,118 @@ export default function AdminPanel() {
   const [uploadingEmp, setUploadingEmp] = useState(false)
   const [uploadProgressProp, setUploadProgressProp] = useState([])
   const [uploadProgressEmp, setUploadProgressEmp] = useState([])
+  const [uploadingPropVideo, setUploadingPropVideo] = useState(false)
+  const [uploadingEmpVideo, setUploadingEmpVideo] = useState(false)
+  const [uploadProgressPropVideo, setUploadProgressPropVideo] = useState([])
+  const [uploadProgressEmpVideo, setUploadProgressEmpVideo] = useState([])
   const fileInputPropRef = useRef(null)
   const fileInputEmpRef = useRef(null)
+  const fileInputPropVideoRef = useRef(null)
+  const fileInputEmpVideoRef = useRef(null)
+  const propImageTasksRef = useRef([])
+  const empImageTasksRef = useRef([])
+  const propVideoTasksRef = useRef([])
+  const empVideoTasksRef = useRef([])
 
   const showToast = (msg) => {
     setToast(msg)
     setTimeout(() => setToast(''), 2500)
   }
 
-  const handleImageUpload = async (e, formSetter, setUploading, setProgress) => {
+  const cancelUpload = (idx, tasksRef, setProgress) => {
+    tasksRef.current[idx]?.cancel()
+    setProgress(prev => prev.map((p, i) => i === idx ? { ...p, cancelled: true, progress: 0 } : p))
+  }
+
+  const renderProgress = (progressList, cancelFn) => (
+    <div className="upload-progress-list">
+      {progressList.map((f, i) => {
+        const compressing = f.phase === 'compress'
+        return (
+        <div key={i} className={`upload-progress-item${f.cancelled ? ' cancelled' : ''}`}>
+          <span className="upload-filename">
+            <i className={`fa-solid ${f.cancelled ? 'fa-ban' : f.done ? 'fa-circle-check' : compressing ? 'fa-compress fa-spin' : 'fa-arrow-up-from-bracket'}`} /> {f.name}
+          </span>
+          <div className="upload-bar-wrap">
+            <div className="upload-bar" style={{ width: `${f.progress}%` }} />
+          </div>
+          <span className="upload-pct">
+            {f.done
+              ? <i className="fa-solid fa-circle-check" style={{color:'var(--primary)'}} />
+              : f.cancelled
+                ? <span style={{color:'#999',fontSize:'.75rem'}}>Cancelado</span>
+                : compressing
+                  ? <span style={{fontSize:'.75rem'}}>Comprimiendo {f.progress}%</span>
+                  : `${f.progress}%`
+            }
+          </span>
+          {!f.done && !f.cancelled && !compressing && (
+            <button type="button" className="upload-cancel-btn" onClick={() => cancelFn(i)} title="Cancelar subida">
+              <i className="fa-solid fa-xmark" />
+            </button>
+          )}
+        </div>
+        )
+      })}
+    </div>
+  )
+
+  const handleImageUpload = async (e, formSetter, setUploading, setProgress, fieldName = 'imagenes', tasksRef) => {
     const files = Array.from(e.target.files)
     if (!files.length) return
     setUploading(true)
-    setProgress(files.map(f => ({ name: f.name, progress: 0, done: false })))
-    const uploadedUrls = []
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i]
-      const storageRef = ref(storage, `imagenes/${Date.now()}_${file.name}`)
-      await new Promise((resolve, reject) => {
+    const isVideo = fieldName === 'videos'
+
+    let processedFiles
+    if (isVideo) {
+      // Mostramos la lista y comprimimos uno por uno (la compresión es en tiempo real y usa CPU).
+      setProgress(files.map(f => ({ name: f.name, progress: 0, done: false, cancelled: false, phase: 'compress' })))
+      processedFiles = []
+      for (let i = 0; i < files.length; i++) {
+        const out = await compressVideo(files[i], {
+          onProgress: pct => setProgress(prev => prev.map((p, idx) => idx === i ? { ...p, progress: pct } : p)),
+        })
+        processedFiles.push(out)
+        setProgress(prev => prev.map((p, idx) => idx === i ? { ...p, name: out.name, phase: 'upload', progress: 0 } : p))
+      }
+    } else {
+      processedFiles = await Promise.all(files.map(f => compressImage(f)))
+      setProgress(processedFiles.map(f => ({ name: f.name, progress: 0, done: false, cancelled: false, phase: 'upload' })))
+    }
+    tasksRef.current = new Array(processedFiles.length).fill(null)
+    const results = await Promise.all(
+      processedFiles.map((file, i) => new Promise(resolve => {
+        const folder = isVideo ? 'videos' : 'imagenes'
+        const storageRef = ref(storage, `${folder}/${Date.now()}_${file.name}`)
         const task = uploadBytesResumable(storageRef, file)
+        tasksRef.current[i] = task
         task.on(
           'state_changed',
           snap => {
             const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100)
             setProgress(prev => prev.map((p, idx) => idx === i ? { ...p, progress: pct } : p))
           },
-          reject,
+          () => resolve(null),
           async () => {
             const url = await getDownloadURL(task.snapshot.ref)
-            uploadedUrls.push(url)
             setProgress(prev => prev.map((p, idx) => idx === i ? { ...p, progress: 100, done: true } : p))
-            resolve()
+            resolve(url)
           }
         )
-      })
+      }))
+    )
+    const uploadedUrls = results.filter(Boolean)
+    if (uploadedUrls.length > 0) {
+      formSetter(f => ({
+        ...f,
+        [fieldName]: (f[fieldName] || '').trim()
+          ? (f[fieldName] || '').trim() + '\n' + uploadedUrls.join('\n')
+          : uploadedUrls.join('\n'),
+      }))
     }
-    formSetter(f => ({
-      ...f,
-      imagenes: f.imagenes.trim() ? f.imagenes.trim() + '\n' + uploadedUrls.join('\n') : uploadedUrls.join('\n'),
-    }))
     setUploading(false)
     setProgress([])
+    tasksRef.current = []
     e.target.value = ''
   }
 
@@ -123,6 +305,7 @@ export default function AdminPanel() {
     setForm({
       ...p,
       imagenes: p.imagenes.join('\n'),
+      videos: (p.videos || []).join('\n'),
       precio: String(p.precio),
       ambientes: String(p.ambientes),
       dormitorios: String(p.dormitorios),
@@ -145,11 +328,7 @@ export default function AdminPanel() {
       .split('\n')
       .map(s => s.trim())
       .filter(Boolean)
-
-    if (imagenesArr.length === 0) {
-      alert('Agregá al menos una URL de imagen.')
-      return
-    }
+    const videosArr = (form.videos || '').split('\n').map(s => s.trim()).filter(Boolean)
 
     const datos = {
       ...form,
@@ -160,6 +339,7 @@ export default function AdminPanel() {
       superficie: parseInt(form.superficie) || 0,
       expensas: parseInt(form.expensas) || 0,
       imagenes: imagenesArr,
+      videos: videosArr,
     }
 
     if (vista === 'nueva') {
@@ -182,7 +362,7 @@ export default function AdminPanel() {
   const abrirNuevaEmp = () => { setEmpForm(EMPTY_EMP_FORM); setEmpEditId(null); setVista('emp-nueva') }
 
   const abrirEditarEmp = (e) => {
-    setEmpForm({ ...e, imagenes: e.imagenes.join('\n'), precioDesde: String(e.precioDesde), superficieDesde: String(e.superficieDesde) })
+    setEmpForm({ ...e, imagenes: e.imagenes.join('\n'), videos: (e.videos || []).join('\n'), precioDesde: String(e.precioDesde), superficieDesde: String(e.superficieDesde) })
     setEmpEditId(e.id)
     setVista('emp-editar')
   }
@@ -195,8 +375,8 @@ export default function AdminPanel() {
   const handleGuardarEmp = (ev) => {
     ev.preventDefault()
     const imagenesArr = empForm.imagenes.split('\n').map(s => s.trim()).filter(Boolean)
-    if (imagenesArr.length === 0) { alert('Agregá al menos una URL de imagen.'); return }
-    const datos = { ...empForm, precioDesde: parseInt(empForm.precioDesde) || 0, superficieDesde: parseInt(empForm.superficieDesde) || 0, imagenes: imagenesArr }
+    const videosArr = (empForm.videos || '').split('\n').map(s => s.trim()).filter(Boolean)
+    const datos = { ...empForm, precioDesde: parseInt(empForm.precioDesde) || 0, superficieDesde: parseInt(empForm.superficieDesde) || 0, imagenes: imagenesArr, videos: videosArr }
     if (vista === 'emp-nueva') { addEmprendimiento(datos); showToast('Emprendimiento agregado.') }
     else { updateEmprendimiento(empEditId, datos); showToast('Emprendimiento actualizado.') }
     setVista('emp-lista')
@@ -297,7 +477,7 @@ export default function AdminPanel() {
                     <tr key={p.id} className={!p.disponible ? 'row-inactiva' : ''}>
                       <td>
                         <div className="table-propiedad">
-                          <img src={p.imagenes[0]} alt={p.titulo} className="table-thumb" />
+                          <img src={p.imagenes?.[0]} alt={p.titulo} className={`table-thumb${!p.imagenes?.[0] ? ' no-img' : ''}`} onError={e => e.currentTarget.classList.add('no-img')} />
                           <div>
                             <div className="table-titulo">{p.titulo}</div>
                             <div className="table-ubicacion">
@@ -466,25 +646,13 @@ export default function AdminPanel() {
                         accept="image/*"
                         multiple
                         style={{ display: 'none' }}
-                        onChange={e => handleImageUpload(e, setForm, setUploadingProp, setUploadProgressProp)}
+                        onChange={e => handleImageUpload(e, setForm, setUploadingProp, setUploadProgressProp, 'imagenes', propImageTasksRef)}
                       />
                       <i className="fa-solid fa-cloud-arrow-up" />
                       <span>{uploadingProp ? 'Subiendo...' : 'Hacé clic para seleccionar imágenes'}</span>
                       <small>PNG, JPG, WEBP — múltiples archivos permitidos</small>
                     </div>
-                    {uploadProgressProp.length > 0 && (
-                      <div className="upload-progress-list">
-                        {uploadProgressProp.map((f, i) => (
-                          <div key={i} className="upload-progress-item">
-                            <span className="upload-filename"><i className="fa-solid fa-image" /> {f.name}</span>
-                            <div className="upload-bar-wrap">
-                              <div className="upload-bar" style={{ width: `${f.progress}%` }} />
-                            </div>
-                            <span className="upload-pct">{f.done ? <i className="fa-solid fa-circle-check" style={{color:'var(--primary)'}} /> : `${f.progress}%`}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {uploadProgressProp.length > 0 && renderProgress(uploadProgressProp, i => cancelUpload(i, propImageTasksRef, setUploadProgressProp))}
                   </div>
                   <div className="form-field full">
                     <label>O pegá URLs de imágenes (una por línea)</label>
@@ -505,6 +673,52 @@ export default function AdminPanel() {
                       <div className="img-preview-grid">
                         {form.imagenes.split('\n').map(s => s.trim()).filter(Boolean).map((url, i) => (
                           <img key={i} src={url} alt={`preview ${i + 1}`} className="img-preview" onError={e => e.target.style.opacity = '0.3'} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="form-section">
+                <h3><i className="fa-solid fa-video" /> Videos</h3>
+                <div className="form-grid">
+                  <div className="form-field full">
+                    <label>Subir videos desde tu dispositivo</label>
+                    <div className="upload-area" onClick={() => fileInputPropVideoRef.current.click()}>
+                      <input
+                        ref={fileInputPropVideoRef}
+                        type="file"
+                        accept="video/*"
+                        multiple
+                        style={{ display: 'none' }}
+                        onChange={e => handleImageUpload(e, setForm, setUploadingPropVideo, setUploadProgressPropVideo, 'videos', propVideoTasksRef)}
+                      />
+                      <i className="fa-solid fa-film" />
+                      <span>{uploadingPropVideo ? 'Subiendo...' : 'Hacé clic para seleccionar videos'}</span>
+                      <small>MP4, MOV, WEBM — múltiples archivos permitidos</small>
+                    </div>
+                    {uploadProgressPropVideo.length > 0 && renderProgress(uploadProgressPropVideo, i => cancelUpload(i, propVideoTasksRef, setUploadProgressPropVideo))}
+                  </div>
+                  <div className="form-field full">
+                    <label>O pegá URLs de videos (una por línea)</label>
+                    <textarea
+                      name="videos"
+                      value={form.videos}
+                      onChange={handleChange}
+                      placeholder="https://firebasestorage.googleapis.com/..."
+                      rows={3}
+                    />
+                    <span className="form-hint">
+                      <i className="fa-solid fa-circle-info" /> Los videos subidos se agregan automáticamente a esta lista.
+                    </span>
+                  </div>
+                  {form.videos && (
+                    <div className="form-field full">
+                      <label>Vista previa de videos</label>
+                      <div className="video-preview-grid">
+                        {form.videos.split('\n').map(s => s.trim()).filter(Boolean).map((url, i) => (
+                          <video key={i} src={url} controls className="video-preview" />
                         ))}
                       </div>
                     </div>
@@ -576,7 +790,7 @@ export default function AdminPanel() {
                     <tr key={e.id} className={!e.activo ? 'row-inactiva' : ''}>
                       <td>
                         <div className="table-propiedad">
-                          <img src={e.imagenes[0]} alt={e.titulo} className="table-thumb" />
+                          <img src={e.imagenes?.[0]} alt={e.titulo} className={`table-thumb${!e.imagenes?.[0] ? ' no-img' : ''}`} onError={ev => ev.currentTarget.classList.add('no-img')} />
                           <div>
                             <div className="table-titulo">{e.titulo}</div>
                             <div className="table-ubicacion"><i className="fa-solid fa-location-dot" /> {e.ubicacion}</div>
@@ -701,25 +915,13 @@ export default function AdminPanel() {
                         accept="image/*"
                         multiple
                         style={{ display: 'none' }}
-                        onChange={e => handleImageUpload(e, setEmpForm, setUploadingEmp, setUploadProgressEmp)}
+                        onChange={e => handleImageUpload(e, setEmpForm, setUploadingEmp, setUploadProgressEmp, 'imagenes', empImageTasksRef)}
                       />
                       <i className="fa-solid fa-cloud-arrow-up" />
                       <span>{uploadingEmp ? 'Subiendo...' : 'Hacé clic para seleccionar imágenes'}</span>
                       <small>PNG, JPG, WEBP — múltiples archivos permitidos</small>
                     </div>
-                    {uploadProgressEmp.length > 0 && (
-                      <div className="upload-progress-list">
-                        {uploadProgressEmp.map((f, i) => (
-                          <div key={i} className="upload-progress-item">
-                            <span className="upload-filename"><i className="fa-solid fa-image" /> {f.name}</span>
-                            <div className="upload-bar-wrap">
-                              <div className="upload-bar" style={{ width: `${f.progress}%` }} />
-                            </div>
-                            <span className="upload-pct">{f.done ? <i className="fa-solid fa-circle-check" style={{color:'var(--primary)'}} /> : `${f.progress}%`}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {uploadProgressEmp.length > 0 && renderProgress(uploadProgressEmp, i => cancelUpload(i, empImageTasksRef, setUploadProgressEmp))}
                   </div>
                   <div className="form-field full">
                     <label>O pegá URLs de imágenes (una por línea)</label>
@@ -740,6 +942,46 @@ export default function AdminPanel() {
                   )}
                 </div>
               </div>
+              <div className="form-section">
+                <h3><i className="fa-solid fa-video" /> Videos</h3>
+                <div className="form-grid">
+                  <div className="form-field full">
+                    <label>Subir videos desde tu dispositivo</label>
+                    <div className="upload-area" onClick={() => fileInputEmpVideoRef.current.click()}>
+                      <input
+                        ref={fileInputEmpVideoRef}
+                        type="file"
+                        accept="video/*"
+                        multiple
+                        style={{ display: 'none' }}
+                        onChange={e => handleImageUpload(e, setEmpForm, setUploadingEmpVideo, setUploadProgressEmpVideo, 'videos', empVideoTasksRef)}
+                      />
+                      <i className="fa-solid fa-film" />
+                      <span>{uploadingEmpVideo ? 'Subiendo...' : 'Hacé clic para seleccionar videos'}</span>
+                      <small>MP4, MOV, WEBM — múltiples archivos permitidos</small>
+                    </div>
+                    {uploadProgressEmpVideo.length > 0 && renderProgress(uploadProgressEmpVideo, i => cancelUpload(i, empVideoTasksRef, setUploadProgressEmpVideo))}
+                  </div>
+                  <div className="form-field full">
+                    <label>O pegá URLs de videos (una por línea)</label>
+                    <textarea name="videos" value={empForm.videos} onChange={handleChangeEmp} placeholder="https://firebasestorage.googleapis.com/..." rows={3} />
+                    <span className="form-hint">
+                      <i className="fa-solid fa-circle-info" /> Los videos subidos se agregan automáticamente a esta lista.
+                    </span>
+                  </div>
+                  {empForm.videos && (
+                    <div className="form-field full">
+                      <label>Vista previa de videos</label>
+                      <div className="video-preview-grid">
+                        {empForm.videos.split('\n').map(s => s.trim()).filter(Boolean).map((url, i) => (
+                          <video key={i} src={url} controls className="video-preview" />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div className="form-section">
                 <h3><i className="fa-solid fa-toggle-on" /> Configuración</h3>
                 <div className="form-checkboxes">
