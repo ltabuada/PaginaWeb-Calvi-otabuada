@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -14,13 +14,10 @@ export default function Navbar() {
   return (
     <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
       <div className="nav-container">
-        <Link to="/" className="nav-logo">
-        </Link>
-
         <ul className={`nav-links${menuOpen ? ' open' : ''}`}>
           <li><NavLink to="/" end onClick={() => setMenuOpen(false)}>Inicio</NavLink></li>
           <li><NavLink to="/propiedades" onClick={() => setMenuOpen(false)}>Propiedades</NavLink></li>
-          <li><a href="/#servicios" onClick={() => setMenuOpen(false)}>Servicios</a></li>
+          <li><NavLink to="/emprendimientos" onClick={() => setMenuOpen(false)}>Emprendimientos</NavLink></li>
           <li><a href="/#nosotros" onClick={() => setMenuOpen(false)}>Nosotros</a></li>
           <li><a href="/#contacto" onClick={() => setMenuOpen(false)}>Contacto</a></li>
         </ul>

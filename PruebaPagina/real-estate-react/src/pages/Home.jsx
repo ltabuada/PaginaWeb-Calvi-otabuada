@@ -12,6 +12,33 @@ const SLIDES = [
   '',
 ]
 
+const TESTIMONIOS = [
+  {
+    nombre: 'Graciela P.',
+    iniciales: 'GP',
+    texto: 'Trabajé con ellos para alquilar mi departamento en Villa Devoto y quedé muy satisfecha. Muy profesionales, responden rápido y se encargan de todo el papeleo. Los recomiendo sin dudar.',
+    estrellas: 5,
+    detalle: 'Propietaria · hace 2 meses',
+    destacado: false,
+  },
+  {
+    nombre: 'Martín S.',
+    iniciales: 'MS',
+    texto: 'Compré mi primer departamento con el asesoramiento de Calviño Tabuada. Sin su ayuda hubiera sido imposible navegar el proceso. Conocen el barrio de memoria y siempre me dieron la información justa.',
+    estrellas: 5,
+    detalle: 'Comprador · hace 4 meses',
+    destacado: true,
+  },
+  {
+    nombre: 'Valeria R.',
+    iniciales: 'VR',
+    texto: 'Los conozco desde hace años porque mi familia siempre trabajó con ellos. Vendimos una casa familiar y el trato fue impecable: transparentes, rápidos y muy humanos. Gracias totales.',
+    estrellas: 5,
+    detalle: 'Vendedora · hace 1 mes',
+    destacado: false,
+  },
+]
+
 export default function Home() {
   const { listingsPublicos } = useListings()
   const { addConsulta } = useConsultas()
@@ -22,8 +49,20 @@ export default function Home() {
   const [ambientes, setAmbientes] = useState('')
   const [formSent, setFormSent] = useState(false)
   const intervalRef = useRef(null)
+  const statsRef = useRef(null)
+  const countedRef = useRef(false)
+  const [count35, setCount35] = useState(0)
+  const [count120, setCount120] = useState(0)
+  const [splashExit, setSplashExit] = useState(false)
+  const [splashDone, setSplashDone] = useState(false)
 
-  // Slider automático
+  // Splash screen
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    const t1 = setTimeout(() => setSplashExit(true), 2200)
+    const t2 = setTimeout(() => { setSplashDone(true); document.body.style.overflow = '' }, 3200)
+    return () => { clearTimeout(t1); clearTimeout(t2); document.body.style.overflow = '' }
+  }, [])
   useEffect(() => {
     intervalRef.current = setInterval(() => setSlide(s => (s + 1) % SLIDES.length), 5000)
     return () => clearInterval(intervalRef.current)
@@ -44,11 +83,28 @@ export default function Home() {
     return () => observer.disconnect()
   }, [])
 
+  // Contadores animados hero stats
+  useEffect(() => {
+    const el = statsRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !countedRef.current) {
+        countedRef.current = true
+        let v35 = 0
+        const t35 = setInterval(() => { v35++; setCount35(v35); if (v35 >= 35) clearInterval(t35) }, 45)
+        let v120 = 0
+        const t120 = setInterval(() => { v120 += 3; setCount120(Math.min(v120, 120)); if (v120 >= 120) clearInterval(t120) }, 22)
+      }
+    }, { threshold: 0.5 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
   const handleBuscar = () => {
     const params = new URLSearchParams()
     if (buscar) params.set('buscar', buscar)
-    if (tipo) params.set('operacion', tipo)       // tipo state ahora guarda operacion
-    if (ambientes) params.set('tipo', ambientes)  // ambientes state ahora guarda tipo
+    if (tipo) params.set('operacion', tipo)
+    if (ambientes) params.set('tipo', ambientes)
     navigate(`/propiedades${params.toString() ? '?' + params.toString() : ''}`)
   }
 
@@ -78,6 +134,17 @@ export default function Home() {
 
   return (
     <>
+      {/* SPLASH */}
+      {!splashDone && (
+        <div className={`splash${splashExit ? ' splash--exit' : ''}`}>
+          <div className="splash-inner">
+            <img className="splash-logo" src="/LogoInicio.png" alt="Calviño Tabuada Propiedades" />
+            <div className="splash-line" />
+            <p className="splash-tagline">Alquilá · Comprá · Vendé</p>
+          </div>
+        </div>
+      )}
+
       <Navbar />
 
       {/* HERO */}
@@ -146,10 +213,10 @@ export default function Home() {
             </button>
           </div>
 
-          <div className="hero-stats">
-            <div className="hero-stat"><strong>+35 años</strong><span>De experiencia</span></div>
+          <div className="hero-stats" ref={statsRef}>
+            <div className="hero-stat"><strong>+{count35} años</strong><span>De experiencia</span></div>
             <div className="hero-stat-divider" />
-            <div className="hero-stat"><strong>+120</strong><span>Obras comercializadas</span></div>
+            <div className="hero-stat"><strong>+{count120}</strong><span>Obras comercializadas</span></div>
           </div>
         </div>
         <div className="hero-dots">
@@ -354,6 +421,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* TESTIMONIOS */}
+      <section className="testimonios" id="testimonios">
+        <div className="container">
+          <div className="section-header section-header--center fade-up">
+            <div className="section-tag">Lo que dicen nuestros clientes</div>
+            <h2>Reseñas de quienes<br /><span>ya confiaron en nosotros</span></h2>
+            <div className="testimonios-rating-header">
+              <span className="testimonios-score">4.9</span>
+              <div className="testimonios-score-info">
+                <div className="estrellas">★★★★★</div>
+                <span className="testimonios-total">Basado en reseñas de Google Maps</span>
+              </div>
+            </div>
+          </div>
+          <div className="testimonios-grid">
+            {TESTIMONIOS.map((t, i) => (
+              <div key={i} className={`testimonio fade-up${t.destacado ? ' testimonio--destacado' : ''}`}>
+                <div className="testimonio-top">
+                  <div className="estrellas">{'★'.repeat(t.estrellas)}</div>
+                  <i className="fa-solid fa-quote-right quote-icon" />
+                </div>
+                <p>"{t.texto}"</p>
+                <div className="testimonio-autor">
+                  <div className="avatar">{t.iniciales}</div>
+                  <div>
+                    <strong>{t.nombre}</strong>
+                    <span>{t.detalle}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* COMO FUNCIONA */}
       <section className="como-funciona">
         <div className="container">
@@ -426,6 +528,14 @@ export default function Home() {
                 <a href="https://www.facebook.com/inmobiliaria2804" className="social-btn"><i className="fa-brands fa-facebook-f" /></a>
                 <a href="https://wa.me/5491145713005" className="social-btn"><i className="fa-brands fa-whatsapp" /></a>
               </div>
+              <div className="contacto-mapa">
+                <iframe
+                  src="https://maps.google.com/maps?q=Av.+Mosconi+2804,+Villa+Devoto,+Buenos+Aires,+Argentina&z=16&output=embed"
+                  title="Ubicación Calviño Tabuada Propiedades"
+                  loading="lazy"
+                  allowFullScreen
+                />
+              </div>
             </div>
 
             <form className="contacto-form" onSubmit={handleFormSubmit}>
@@ -471,6 +581,17 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* WHATSAPP FLOTANTE */}
+      <a
+        href="https://wa.me/5491145713005"
+        className="whatsapp-float"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Contactar por WhatsApp"
+      >
+        <i className="fa-brands fa-whatsapp" />
+      </a>
 
       <Footer />
     </>
