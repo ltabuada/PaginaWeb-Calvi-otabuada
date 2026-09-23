@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import MapView from '../components/MapView'
+import VideoPlayer from '../components/VideoPlayer'
 import { useListings } from '../context/ListingsContext'
 import { useConsultas } from '../context/ConsultasContext'
 
@@ -175,7 +176,7 @@ export default function ListingDetail() {
             </h3>
             <div className="detail-videos-grid">
               {propiedad.videos.map((url, i) => (
-                <video key={i} src={url} controls className="detail-video" />
+                <VideoPlayer key={i} url={url} className="detail-video" />
               ))}
             </div>
           </div>

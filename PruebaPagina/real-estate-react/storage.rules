@@ -1,0 +1,21 @@
+rules_version = '2';
+
+// Reglas de Firebase Storage para Calvi & Tabuada Propiedades.
+//
+// IMPORTANTE: esta app NO usa Firebase Authentication (el login de admin es solo
+// del lado del navegador), por eso las subidas llegan SIN autenticar. Para que
+// funcionen, la escritura tiene que estar permitida. Para mitigar abusos, solo
+// se aceptan imágenes y videos de hasta 50 MB.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      // Cualquiera puede VER las imágenes/videos (necesario para mostrarlos en el sitio).
+      allow read: if true;
+
+      // Solo se pueden SUBIR imágenes o videos de hasta 50 MB.
+      allow write: if request.resource.size < 50 * 1024 * 1024
+                   && (request.resource.contentType.matches('image/.*')
+                       || request.resource.contentType.matches('video/.*'));
+    }
+  }
+}

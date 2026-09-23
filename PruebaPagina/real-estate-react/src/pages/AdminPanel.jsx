@@ -8,6 +8,7 @@ import { storage } from '../firebase'
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import MapView from '../components/MapView'
 import LocationAutocomplete from '../components/LocationAutocomplete'
+import VideoPlayer from '../components/VideoPlayer'
 
 const compressImage = (file, maxDim = 1920, quality = 0.8) =>
   new Promise(resolve => {
@@ -266,7 +267,12 @@ export default function AdminPanel() {
             const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100)
             setProgress(prev => prev.map((p, idx) => idx === i ? { ...p, progress: pct } : p))
           },
-          () => resolve(null),
+          (error) => {
+            console.error('Error al subir a Firebase Storage:', error.code, error.message)
+            showToast(`Error al subir ${file.name}: ${error.code}`)
+            setProgress(prev => prev.map((p, idx) => idx === i ? { ...p, error: true } : p))
+            resolve(null)
+          },
           async () => {
             const url = await getDownloadURL(task.snapshot.ref)
             setProgress(prev => prev.map((p, idx) => idx === i ? { ...p, progress: 100, done: true } : p))
@@ -706,11 +712,11 @@ export default function AdminPanel() {
                       name="videos"
                       value={form.videos}
                       onChange={handleChange}
-                      placeholder="https://firebasestorage.googleapis.com/..."
+                      placeholder={"https://www.youtube.com/watch?v=...\nhttps://vimeo.com/..."}
                       rows={3}
                     />
                     <span className="form-hint">
-                      <i className="fa-solid fa-circle-info" /> Los videos subidos se agregan automáticamente a esta lista.
+                      <i className="fa-solid fa-circle-info" /> Recomendado: pegá un link de YouTube o Vimeo (carga al instante). También se aceptan videos subidos a Firebase.
                     </span>
                   </div>
                   {form.videos && (
@@ -718,7 +724,7 @@ export default function AdminPanel() {
                       <label>Vista previa de videos</label>
                       <div className="video-preview-grid">
                         {form.videos.split('\n').map(s => s.trim()).filter(Boolean).map((url, i) => (
-                          <video key={i} src={url} controls className="video-preview" />
+                          <VideoPlayer key={i} url={url} className="video-preview" />
                         ))}
                       </div>
                     </div>
@@ -964,9 +970,9 @@ export default function AdminPanel() {
                   </div>
                   <div className="form-field full">
                     <label>O pegá URLs de videos (una por línea)</label>
-                    <textarea name="videos" value={empForm.videos} onChange={handleChangeEmp} placeholder="https://firebasestorage.googleapis.com/..." rows={3} />
+                    <textarea name="videos" value={empForm.videos} onChange={handleChangeEmp} placeholder={"https://www.youtube.com/watch?v=...\nhttps://vimeo.com/..."} rows={3} />
                     <span className="form-hint">
-                      <i className="fa-solid fa-circle-info" /> Los videos subidos se agregan automáticamente a esta lista.
+                      <i className="fa-solid fa-circle-info" /> Recomendado: pegá un link de YouTube o Vimeo (carga al instante). También se aceptan videos subidos a Firebase.
                     </span>
                   </div>
                   {empForm.videos && (
@@ -974,7 +980,7 @@ export default function AdminPanel() {
                       <label>Vista previa de videos</label>
                       <div className="video-preview-grid">
                         {empForm.videos.split('\n').map(s => s.trim()).filter(Boolean).map((url, i) => (
-                          <video key={i} src={url} controls className="video-preview" />
+                          <VideoPlayer key={i} url={url} className="video-preview" />
                         ))}
                       </div>
                     </div>
