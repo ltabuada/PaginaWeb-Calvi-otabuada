@@ -14,6 +14,10 @@ export default function Navbar() {
   return (
     <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
       <div className="nav-container">
+        <NavLink to="/" className="nav-logo" onClick={() => setMenuOpen(false)} aria-label="Calviño Tabuada Propiedades - Inicio">
+          <img src="/LogoInicio.png" alt="Calviño Tabuada Propiedades" />
+        </NavLink>
+
         <ul className={`nav-links${menuOpen ? ' open' : ''}`}>
           <li><NavLink to="/" end onClick={() => setMenuOpen(false)}>Inicio</NavLink></li>
           <li><NavLink to="/propiedades" onClick={() => setMenuOpen(false)}>Propiedades</NavLink></li>
@@ -23,6 +27,9 @@ export default function Navbar() {
         </ul>
 
         <div className="nav-actions">
+          <a href="https://wa.me/5491145713005" className="nav-cta" target="_blank" rel="noopener noreferrer">
+            <i className="fa-brands fa-whatsapp" /> <span>Contactanos</span>
+          </a>
           <button className="hamburger" onClick={() => setMenuOpen(o => !o)}>
             <span /><span /><span />
           </button>

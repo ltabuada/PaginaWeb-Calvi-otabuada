@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -7,9 +7,36 @@ import { useListings } from '../context/ListingsContext'
 import { useConsultas } from '../context/ConsultasContext'
 
 const SLIDES = [
-  'https://imgar.zonapropcdn.com/avisos/resize/1/00/58/97/12/19/1200x1200/2049202376.jpg?isFirstImage=true',
   '/fotoSlide.jpeg',
-  '',
+  '/Terraza Habana Terrada.jpeg',
+  '/Habana 2602.jpeg',
+]
+
+const SERVICIOS = [
+  {
+    id: 'alquiler', icon: 'fa-key', tipo: 'alquiler', titulo: 'Alquiler',
+    desc: 'Seleccioná dentro de nuestro catálogo. Te acompañamos desde la búsqueda hasta la firma del contrato.',
+    items: ['Búsqueda personalizada', 'Gestión documental completa', 'Asesoramiento legal incluido'],
+    linkTo: '/propiedades?operacion=alquiler', linkTexto: 'Ver propiedades en alquiler',
+  },
+  {
+    id: 'venta', icon: 'fa-handshake', tipo: 'venta', titulo: 'Compra y Venta',
+    desc: 'Te orientamos y asesoramos en cada paso del proceso de tu compra o venta de una propiedad.',
+    items: ['Tasación del inmueble', 'Estrategia de publicación', 'Acompañamiento en escritura'],
+    linkTo: '/propiedades?operacion=venta', linkTexto: 'Ver propiedades en venta',
+  },
+  {
+    id: 'tasacion', icon: 'fa-calculator', tipo: 'tasacion', titulo: 'Tasación Gratuita',
+    desc: '¿Querés saber cuánto vale tu propiedad hoy? Te realizamos una tasación profesional sin costo, con análisis de mercado actualizado.',
+    items: ['Valuación de mercado', 'Análisis de zona y comparables', 'Informe detallado'],
+    linkHref: '#contacto', linkTexto: 'Solicitar tasación gratuita',
+  },
+  {
+    id: 'inversion', icon: 'fa-chart-line', tipo: 'inversion', titulo: 'Inversión Inmobiliaria',
+    desc: 'Te asesoramos para invertir en ladrillos con criterio, identificando las mejores oportunidades para maximizar tu rentabilidad.',
+    items: ['Análisis de rentabilidad', 'Selección de activos', 'Seguimiento post-inversión'],
+    linkHref: '#contacto', linkTexto: 'Consultá nuestros asesores',
+  },
 ]
 
 const TESTIMONIOS = [
@@ -166,11 +193,12 @@ export default function Home() {
             alt="Calvi Propiedades"
             style={{
               width: '100%',
-              maxWidth: '860px',
-              height: 'clamp(7rem, 16.5vw, 14.3rem)',
+              maxWidth: '620px',
+              height: 'clamp(5rem, 11vw, 9rem)',
               objectFit: 'contain',
+              objectPosition: 'left center',
               display: 'block',
-              margin: '0 auto 1.2rem',
+              margin: '0 0 1.2rem',
             }}
           />
 
@@ -226,105 +254,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CATEGORIAS */}
-      <section className="categorias">
-        <div className="container">
-          <div className="categorias-grid">
-            <Link to="/propiedades?operacion=alquiler" className="categoria-card fade-up">
-              <div className="cat-icon"><i className="fa-solid fa-key" /></div>
-              <h3>Alquiler</h3>
-              <span className="cat-link">Ver disponibles <i className="fa-solid fa-arrow-right" /></span>
-            </Link>
-            <Link to="/propiedades?operacion=venta" className="categoria-card fade-up">
-              <div className="cat-icon"><i className="fa-solid fa-handshake" /></div>
-              <h3>Venta</h3>
-              <span className="cat-link">Ver en venta <i className="fa-solid fa-arrow-right" /></span>
-            </Link>
-            <a href="/#servicios" className="categoria-card fade-up">
-              <div className="cat-icon"><i className="fa-solid fa-calculator" /></div>
-              <h3>Tasación</h3>
-              <span className="cat-link">Más información <i className="fa-solid fa-arrow-right" /></span>
-            </a>
-            <Link to="/propiedades" className="categoria-card fade-up">
-              <div className="cat-icon"><i className="fa-solid fa-chart-line" /></div>
-              <h3>Inversión</h3>
-              <span className="cat-link">Consultanos <i className="fa-solid fa-arrow-right" /></span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* SERVICIOS */}
+      {/* SERVICIOS — editorial asimétrico */}
       <section className="servicios" id="servicios">
-        <div className="container">
-          <div className="section-header section-header--center fade-up">
-            <div className="section-tag">Lo que hacemos</div>
-            <h2>Servicios integrales<br /><span>para cada necesidad</span></h2>
+        <div className="servicios-editorial">
+          <div className="servicios-visual fade-up">
+            <div className="servicios-visual-img">
+              <img src="/Ceretti3265.jpeg" alt="Edificio Ceretti - Calviño Tabuada Propiedades" />
+            </div>
+            <div className="servicios-visual-tag">
+              <span className="brand-mark-lg" />
+              <div>
+                <strong>35+ años</strong>
+                <span>construyendo confianza en Villa Devoto</span>
+              </div>
+            </div>
           </div>
-          <div className="servicios-grid">
-            <div className="servicio-card fade-up">
-              <div className="servicio-icon servicio-icon--alquiler">
-                <i className="fa-solid fa-key" />
-              </div>
-              <h3>Alquiler</h3>
-              <p>Selecciona dentro de nuestro catalogo. Te acompañamos desde la búsqueda hasta la firma del contrato.</p>
-              <ul className="servicio-items">
-                <li><i className="fa-solid fa-check" /> Búsqueda personalizada</li>
-                <li><i className="fa-solid fa-check" /> Gestión documental completa</li>
-                <li><i className="fa-solid fa-check" /> Asesoramiento legal incluido</li>
-              </ul>
-              <Link to="/propiedades?operacion=alquiler" className="servicio-link">
-                Ver propiedades en alquiler <i className="fa-solid fa-arrow-right" />
-              </Link>
-            </div>
 
-            <div className="servicio-card fade-up">
-              <div className="servicio-icon servicio-icon--venta">
-                <i className="fa-solid fa-handshake" />
-              </div>
-              <h3>Compra y Venta</h3>
-              <p>Te orientamos y asesoramos en cada paso del proceso de tu compra/venta de una propiedad.</p>
-              <ul className="servicio-items">
-                <li><i className="fa-solid fa-check" /> Tasación del inmueble</li>
-                <li><i className="fa-solid fa-check" /> Estrategia de publicación</li>
-                <li><i className="fa-solid fa-check" /> Acompañamiento en escritura</li>
-              </ul>
-              <Link to="/propiedades?operacion=venta" className="servicio-link">
-                Ver propiedades en venta <i className="fa-solid fa-arrow-right" />
-              </Link>
+          <div className="servicios-list">
+            <div className="section-header fade-up">
+              <div className="section-tag">Lo que hacemos</div>
+              <h2>Servicios integrales<br /><span>para cada necesidad</span></h2>
             </div>
-
-            <div className="servicio-card fade-up">
-              <div className="servicio-icon servicio-icon--tasacion">
-                <i className="fa-solid fa-calculator" />
+            {SERVICIOS.map((s, i) => (
+              <div key={s.id} className="servicio-row fade-up">
+                <span className="servicio-num">{String(i + 1).padStart(2, '0')}</span>
+                <div className={`servicio-row-icon servicio-icon--${s.tipo}`}>
+                  <i className={`fa-solid ${s.icon}`} />
+                </div>
+                <div className="servicio-row-body">
+                  <h3>{s.titulo}</h3>
+                  <p>{s.desc}</p>
+                  <ul className="servicio-items">
+                    {s.items.map(it => <li key={it}><i className="fa-solid fa-check" /> {it}</li>)}
+                  </ul>
+                  {s.linkTo
+                    ? <Link to={s.linkTo} className="servicio-link">{s.linkTexto} <i className="fa-solid fa-arrow-right" /></Link>
+                    : <a href={s.linkHref} className="servicio-link">{s.linkTexto} <i className="fa-solid fa-arrow-right" /></a>}
+                </div>
               </div>
-              <h3>Tasación Gratuita</h3>
-              <p>¿Querés saber cuánto vale tu propiedad hoy? Te realizamos una tasación profesional sin costo, con análisis del mercado actualizado.</p>
-              <ul className="servicio-items">
-                <li><i className="fa-solid fa-check" /> Valuación de mercado</li>
-                <li><i className="fa-solid fa-check" /> Análisis de zona y comparables</li>
-                <li><i className="fa-solid fa-check" /> Informe detallado</li>
-              </ul>
-              <a href="#contacto" className="servicio-link">
-                Solicitar tasación gratuita <i className="fa-solid fa-arrow-right" />
-              </a>
-            </div>
-
-            <div className="servicio-card fade-up">
-              <div className="servicio-icon servicio-icon--inversion">
-                <i className="fa-solid fa-chart-line" />
-              </div>
-              <h3>Inversión Inmobiliaria</h3>
-              <p>Te asesoramos para invertir en ladrillos con criterio. Identificamos las mejores oportunidades del mercado para maximizar tu rentabilidad.</p>
-              <ul className="servicio-items">
-                <li><i className="fa-solid fa-check" /> Análisis de rentabilidad</li>
-                <li><i className="fa-solid fa-check" /> Selección de activos</li>
-                <li><i className="fa-solid fa-check" /> Seguimiento post-inversión</li>
-              </ul>
-              <a href="#contacto" className="servicio-link">
-                Consultá nuestros asesores <i className="fa-solid fa-arrow-right" />
-              </a>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -348,20 +316,25 @@ export default function Home() {
               </Link>
             </div>
             <div className="emprendimientos-visual">
-              <div className="emp-card fade-up">
-                <div className="emp-card-icon"><i className="fa-solid fa-building-columns" /></div>
-                <strong>Inversión desde el pozo</strong>
-                <span>Las mejores unidades al precio más bajo</span>
+              <div className="emprendimientos-visual-bg">
+                <img src="/blueprint-edificio.webp" alt="Plano de emprendimiento en desarrollo" />
               </div>
-              <div className="emp-card fade-up">
-                <div className="emp-card-icon"><i className="fa-solid fa-file-contract" /></div>
-                <strong>Gestión completa</strong>
-                <span>Nos encargamos de toda la documentación</span>
-              </div>
-              <div className="emp-card fade-up">
-                <div className="emp-card-icon"><i className="fa-solid fa-chart-line" /></div>
-                <strong>Rentabilidad garantizada</strong>
-                <span>Proyectos con alta demanda de alquiler</span>
+              <div className="emp-cards-stack">
+                <div className="emp-card fade-up">
+                  <div className="emp-card-icon"><i className="fa-solid fa-building-columns" /></div>
+                  <strong>Inversión desde el pozo</strong>
+                  <span>Las mejores unidades al precio más bajo</span>
+                </div>
+                <div className="emp-card fade-up">
+                  <div className="emp-card-icon"><i className="fa-solid fa-file-contract" /></div>
+                  <strong>Gestión completa</strong>
+                  <span>Nos encargamos de toda la documentación</span>
+                </div>
+                <div className="emp-card fade-up">
+                  <div className="emp-card-icon"><i className="fa-solid fa-chart-line" /></div>
+                  <strong>Rentabilidad garantizada</strong>
+                  <span>Proyectos con alta demanda de alquiler</span>
+                </div>
               </div>
             </div>
           </div>
@@ -380,9 +353,23 @@ export default function Home() {
               Ver todas <i className="fa-solid fa-arrow-right" />
             </Link>
           </div>
-          <div className="propiedades-grid">
-            {destacadas.map(p => <PropiedadCard key={p.id} propiedad={p} />)}
-          </div>
+          {destacadas.length === 0 ? (
+            <div className="destacadas-empty">
+              <i className="fa-solid fa-house-circle-check" />
+              <p>Estamos preparando nuestras próximas propiedades destacadas. Mientras tanto, explorá todo el catálogo disponible.</p>
+            </div>
+          ) : (
+            <div className="destacadas-bento">
+              <div className="bento-featured">
+                <PropiedadCard propiedad={destacadas[0]} />
+              </div>
+              {destacadas.length > 1 && (
+                <div className="bento-side">
+                  {destacadas.slice(1, 3).map(p => <PropiedadCard key={p.id} propiedad={p} />)}
+                </div>
+              )}
+            </div>
+          )}
           <div className="text-center" style={{ marginTop: '3rem' }}>
             <Link to="/propiedades" className="btn-primary">
               Explorar todas las propiedades <i className="fa-solid fa-arrow-right" />
@@ -470,15 +457,15 @@ export default function Home() {
               { num: '03', icon: 'fa-calendar-check', title: 'Visitas y negociación', desc: 'Coordinamos visitas y te acompañamos en cada etapa de la negociación.' },
               { num: '04', icon: 'fa-file-signature', title: 'Cierre seguro', desc: 'Gestionamos toda la documentación para que tu operación sea rápida y sin inconvenientes.' },
             ].map((paso, i, arr) => (
-              <>
-                <div key={paso.num} className="paso fade-up">
+              <Fragment key={paso.num}>
+                <div className="paso fade-up" style={{ '--stagger': `${-i * 26}px` }}>
                   <div className="paso-num">{paso.num}</div>
                   <div className="paso-icon"><i className={`fa-solid ${paso.icon}`} /></div>
                   <h3>{paso.title}</h3>
                   <p>{paso.desc}</p>
                 </div>
-                {i < arr.length - 1 && <div key={`arrow-${i}`} className="paso-arrow"><i className="fa-solid fa-arrow-right" /></div>}
-              </>
+                {i < arr.length - 1 && <div className="paso-arrow"><i className="fa-solid fa-arrow-right" /></div>}
+              </Fragment>
             ))}
           </div>
         </div>

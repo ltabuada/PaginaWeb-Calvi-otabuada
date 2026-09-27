@@ -112,7 +112,7 @@ export default function ListingDetail() {
               {propiedad.operacion === 'alquiler' && <div className="detail-precio-mes">/mes</div>}
             </div>
             {propiedad.expensas > 0
-              ? <p style={{ color: 'var(--text-light)', fontSize: '.85rem', marginTop: '.3rem' }}>
+              ? <p style={{ color: 'var(--text-2)', fontSize: '.85rem', marginTop: '.3rem' }}>
                   + ${new Intl.NumberFormat('es-AR').format(propiedad.expensas)} expensas
                 </p>
               : <p style={{ color: '#22c55e', fontSize: '.85rem', marginTop: '.3rem', fontWeight: 700 }}>Sin expensas</p>
