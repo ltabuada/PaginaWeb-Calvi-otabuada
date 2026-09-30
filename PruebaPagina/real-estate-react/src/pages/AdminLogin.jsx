@@ -1,29 +1,51 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
+// Los proyectos nuevos de Firebase traen Email Enumeration Protection, así que
+// en la práctica devuelven invalid-credential sin distinguir si el email existe.
+// Que los tres casos digan lo mismo además es lo correcto: no confirmamos
+// qué direcciones están registradas.
+const traducirErrorAuth = (code) => ({
+  'auth/invalid-email': 'El email no tiene un formato válido.',
+  'auth/invalid-credential': 'Email o contraseña incorrectos.',
+  'auth/user-not-found': 'Email o contraseña incorrectos.',
+  'auth/wrong-password': 'Email o contraseña incorrectos.',
+  'auth/user-disabled': 'Esta cuenta está deshabilitada.',
+  'auth/too-many-requests': 'Demasiados intentos fallidos. Esperá unos minutos.',
+  'auth/network-request-failed': 'Sin conexión. Revisá tu internet.',
+  'auth/operation-not-allowed': 'El ingreso con email y contraseña no está habilitado en Firebase.',
+  // Aparece cuando Authentication todavía no fue activado en el proyecto.
+  'auth/configuration-not-found': 'Falta activar Authentication en la consola de Firebase (Authentication → Sign-in method → Email/Password).',
+  'auth/invalid-login-credentials': 'Email o contraseña incorrectos.',
+}[code] || 'No pudimos iniciar sesión. Intentá de nuevo.')
+
 export default function AdminLogin() {
-  const { login } = useAuth()
+  const { login, isAdmin, loading: authLoading } = useAuth()
   const navigate = useNavigate()
-  const [user, setUser] = useState('')
+  const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e) => {
+  // Si ya hay sesión, no tiene sentido mostrar el formulario.
+  useEffect(() => {
+    if (!authLoading && isAdmin) navigate('/admin', { replace: true })
+  }, [authLoading, isAdmin, navigate])
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    setTimeout(() => {
-      const ok = login(user.trim(), pass)
-      if (ok) {
-        navigate('/admin')
-      } else {
-        setError('Usuario o contraseña incorrectos.')
-        setPass('')
-      }
+    try {
+      await login(email.trim(), pass)
+      navigate('/admin', { replace: true })
+    } catch (err) {
+      setError(traducirErrorAuth(err?.code))
+      setPass('')
+    } finally {
       setLoading(false)
-    }, 400)
+    }
   }
 
   return (
@@ -39,15 +61,15 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit} className="admin-login-form">
           <div className="admin-field">
-            <label>Usuario</label>
+            <label>Email</label>
             <div className="admin-input-wrapper">
-              <i className="fa-solid fa-user" />
+              <i className="fa-solid fa-envelope" />
               <input
-                type="text"
-                value={user}
-                onChange={e => setUser(e.target.value)}
-                placeholder="Usuario"
-                autoComplete="username"
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="tucorreo@ejemplo.com"
+                autoComplete="email"
                 required
               />
             </div>

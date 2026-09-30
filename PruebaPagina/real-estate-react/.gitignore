@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.local
+.env.*.local
+.DS_Store
+
+# dist/ está commiteado porque el deploy es manual.
+# Descomentar cuando haya deploy automatizado.
+# dist/

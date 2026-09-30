@@ -5,6 +5,8 @@ import Footer from '../components/Footer'
 import MapView from '../components/MapView'
 import { useListings } from '../context/ListingsContext'
 import { useConsultas } from '../context/ConsultasContext'
+import VideoPlayer from '../components/VideoPlayer'
+import { imgCard, imgFull } from '../lib/media'
 
 export default function ListingDetail() {
   const { id } = useParams()
@@ -95,7 +97,7 @@ export default function ListingDetail() {
         <div className="galeria-principal">
           {propiedad.imagenes.slice(0, 4).map((img, i) => (
             <div key={i} className="galeria-img" onClick={() => { setImgActual(i); setModalOpen(true) }}>
-              <img src={img} alt={`${propiedad.titulo} - foto ${i + 1}`} onError={e => e.currentTarget.classList.add('no-img')} />
+              <img src={imgCard(img)} alt={`${propiedad.titulo} - foto ${i + 1}`} loading="lazy" onError={e => e.currentTarget.classList.add('no-img')} />
               <div className="overlay"><i className="fa-solid fa-expand" /></div>
             </div>
           ))}
@@ -175,7 +177,7 @@ export default function ListingDetail() {
             </h3>
             <div className="detail-videos-grid">
               {propiedad.videos.map((url, i) => (
-                <video key={i} src={url} controls className="detail-video" />
+                <VideoPlayer key={i} url={url} title={`${propiedad.titulo} — video ${i + 1}`} />
               ))}
             </div>
           </div>
@@ -199,7 +201,7 @@ export default function ListingDetail() {
             <button className="modal-close" onClick={() => setModalOpen(false)}>
               <i className="fa-solid fa-xmark" />
             </button>
-            <img src={propiedad.imagenes[imgActual]} alt={propiedad.titulo} />
+            <img src={imgFull(propiedad.imagenes[imgActual])} alt={propiedad.titulo} />
             <button className="modal-prev" onClick={prevImg}><i className="fa-solid fa-chevron-left" /></button>
             <button className="modal-next" onClick={nextImg}><i className="fa-solid fa-chevron-right" /></button>
           </div>

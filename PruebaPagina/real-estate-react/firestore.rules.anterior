@@ -1,0 +1,24 @@
+// Reglas que estaban vigentes hasta el 30-09-2026, guardadas como referencia.
+// Dejaban las tres colecciones abiertas a lectura Y escritura para cualquiera:
+// cualquier persona con los datos del bundle público podía crear, editar o
+// borrar propiedades, y leer los datos personales de las consultas recibidas.
+// No se podían cerrar antes porque el login del panel era sessionStorage en el
+// navegador, que no le prueba nada al servidor.
+//
+// Reemplazadas por firestore.rules (Firebase Auth + colección admins).
+// Firebase también guarda el historial de versiones en la consola.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /propiedades/{doc} {
+      allow read, write: if true;
+    }
+    match /emprendimientos/{doc} {
+      allow read, write: if true;
+    }
+    match /consultas/{doc} {
+      allow read, write: if true;
+    }
+  }
+}

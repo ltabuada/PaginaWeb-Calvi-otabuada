@@ -1087,3 +1087,34 @@ section { padding: 90px 0; }
   .admin-table th:nth-child(2), .admin-table td:nth-child(2),
   .admin-table th:nth-child(3), .admin-table td:nth-child(3) { display: none; }
 }
+
+/* ── Subida a Cloudinary: errores visibles, quitar archivos, links de video ── */
+
+/* Un error de subida tiene que poder leerse, no desaparecer sin dejar rastro. */
+.upload-progress-item.error { background: #fff0f0; border: 1px solid #fca5a5; }
+.upload-progress-item.error .upload-bar { background: #dc2626; }
+.upload-error-msg { display: block; font-size: 0.72rem; color: #dc2626; text-align: right; max-width: 240px; line-height: 1.3; white-space: normal; }
+.upload-close-btn { align-self: flex-end; background: none; border: 1px solid var(--line, #ddd); border-radius: 6px; padding: 0.3rem 0.8rem; font-size: 0.78rem; color: var(--text-2); cursor: pointer; }
+.upload-close-btn:hover { background: var(--cream); }
+
+.admin-toast.error { background: #7f1d1d; }
+
+/* Botón para quitar una imagen o video de la lista del formulario. */
+.preview-item { position: relative; display: inline-block; }
+.video-preview-grid .preview-item { display: block; }
+.preview-remove { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border: none; border-radius: 50%; background: rgba(0,0,0,0.65); color: #fff; font-size: 0.7rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; z-index: 2; }
+.preview-remove:hover { background: #dc2626; }
+
+/* Fila de "pegá un link de YouTube/Vimeo". */
+.link-add-row { display: flex; gap: 0.5rem; align-items: stretch; }
+.link-add-row input { flex: 1; min-width: 0; }
+.link-add-row .admin-btn-secondary { white-space: nowrap; }
+
+/* Videos embebidos de YouTube/Vimeo: se reproducen dentro de la página. */
+.video-embed-wrap { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; background: #000; }
+.video-embed-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* Espera mientras Firebase Auth resuelve si hay sesión. */
+.auth-loading { min-height: 60vh; display: flex; align-items: center; justify-content: center; gap: 0.6rem; color: var(--text-2); font-size: 0.95rem; }
+
+.admin-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }

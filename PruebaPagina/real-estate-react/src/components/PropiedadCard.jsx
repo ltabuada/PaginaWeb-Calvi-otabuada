@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { imgCard } from '../lib/media'
 
 export default function PropiedadCard({ propiedad }) {
   const navigate = useNavigate()
@@ -8,7 +9,7 @@ export default function PropiedadCard({ propiedad }) {
   return (
     <div className="propiedad-card" onClick={() => navigate(`/propiedad/${id}`)}>
       <div className="card-img-wrapper">
-        <img src={imagenes?.[0]} alt={titulo} loading="lazy" onError={e => e.currentTarget.classList.add('no-img')} />
+        <img src={imgCard(imagenes?.[0])} alt={titulo} loading="lazy" onError={e => e.currentTarget.classList.add('no-img')} />
         <span className={`card-badge ${disponible ? 'disponible' : 'alquilado'}`}>
           {disponible ? 'Disponible' : 'No disponible'}
         </span>

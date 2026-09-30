@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { useEmprendimientos } from '../context/EmprendimientosContext'
+import { imgCard } from '../lib/media'
 
 const ESTADO_LABEL = { en_pozo: 'En pozo', en_construccion: 'En construcción', a_estrenar: 'A estrenar' }
 const ESTADO_COLOR = { en_pozo: 'emp-badge--pozo', en_construccion: 'emp-badge--construccion', a_estrenar: 'emp-badge--estrenar' }
@@ -88,7 +89,7 @@ export default function Emprendimientos() {
               {emprendimientosActivos.map(e => (
                 <div key={e.id} className="emp-listing-card fade-up">
                   <div className="emp-listing-img">
-                    <img src={e.imagenes[0]} alt={e.titulo} />
+                    <img src={imgCard(e.imagenes?.[0])} alt={e.titulo} loading="lazy" onError={ev => ev.currentTarget.classList.add('no-img')} />
                     <span className={`emp-badge ${ESTADO_COLOR[e.estado]}`}>{ESTADO_LABEL[e.estado]}</span>
                   </div>
                   <div className="emp-listing-body">
