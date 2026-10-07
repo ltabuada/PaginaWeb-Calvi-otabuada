@@ -4,19 +4,49 @@
 
 ## World
 
-Palette sampled directly from the real isologo (`public/Logo*.png/.jpeg`), not invented:
+Palette derived from the real isologo (`public/Logo*.png/.jpeg`) — but from its
+**proportions**, not just its hues. Measured pixel coverage of `LogoLargo.jpeg`:
 
-- `--navy` `#150b7a` — true brand indigo (headings, primary sections, buttons)
-- `--navy-2` `#0e0850` / `--navy-3` `#2e2196` — gradient/accent variants
-- `--navy-deep` `#0a052e` — only for full-bleed drama (hero overlay, splash)
-- `--gold` `#c79a3a` / `--gold-light` `#e4bb63` / `--gold-dark` `#93701f` — refined metallic gold (buttons, accents, text highlights)
-- `--gold-bright` `#f5b90e` — true vivid marigold from the logo, reserved for the brand-mark motif and small high-impact pops
-- `--teal` `#0e7c7d` / `--teal-light` / `--teal-dark` — third brand color, sampled from the agency's real storefront signage and `LogoCircular`/`LogoLargo`; used sparingly as a signature accent (hero overlay tail, "en construcción" badges) since it's real brand identity the previous CSS ignored entirely
-- Neutrals: `--cream` `#faf8f3`, `--text` `#1a1730` (indigo-tinted near-black)
+| Color | Coverage | Saturation |
+|---|---|---|
+| teal `#4b9fa1` | **51.4%** | 36% |
+| white | 10.4% | — |
+| indigo `#130574` | 4.1% | **92%** |
+| gold `#eec144` | **0.2%** | 83% |
 
-Typography: Fraunces (display/serif headings) + Inter (UI/body). Fraunces replaced Playfair Display as a more distinctive editorial serif.
+The previous palette inverted this: indigo (4% of the logo, 92% saturated) ran
+every dark section and gold (0.2% of the logo) was used 74 times — 37 of them as
+body text. Two highly saturated colors in near-equal measure means no hierarchy,
+and indigo+gold together reads as a football club, not an agency.
 
-Recurring brand motif: a small CSS/SVG reproduction of the isologo's own mark (two overlapping offset squares, gold seam) appears before every `.section-tag` label — ties every section back to the real logo geometry instead of a generic icon.
+The current tokens restore the logo's own proportions:
+
+- `--brand` `#1b6f70` — the teal, and the only color that leads. At 36%
+  saturation it cannot shout.
+- `--brand-dark` `#113f45` / `--brand-deep` `#0b2630` — dark sections, hero, splash
+- `--brand-on-dark` `#6fc0c0` — same hue raised for legibility on dark grounds
+- `--ink` `#13293d` — text and the darkest surfaces
+- `--ink-2` `#55656f` / `--ink-3` `#64727b` — secondary/tertiary text
+  (`--ink-3` is pinned at 4.59:1 against `--surface`; don't lighten it)
+- `--accent` `#c9a227` — the gold, as a micro-accent only: review stars, the odd
+  badge. **Never body text.**
+- `--surface` `#f7f6f2`, `--line` `#e4e1d9` — neutrals
+
+Legacy `--navy` / `--gold` names are kept as aliases so ~140 existing
+declarations keep working; `--gold` now points at the teal, which is why title
+emphasis went from gold to teal in one move.
+
+Rule of thumb: **weight carries hierarchy, color carries one voice.** A heading
+is dark ink with a teal emphasis span — never two saturated colors side by side.
+On dark sections that emphasis switches to `--brand-on-dark`.
+
+Typography: Source Serif 4 (display/headings, weight 600) + Inter (UI/body).
+Source Serif replaced Fraunces, whose soft-serif quirk read as decorative rather
+than established; 700/800 weights were pulled back to 600 across serif headings.
+
+The two blueprint illustrations were generated in the old gold-on-indigo palette.
+Rather than regenerate them, they render with `mix-blend-mode: luminosity` over a
+teal ground, so they inherit whatever the palette is.
 
 ## Structural form
 
