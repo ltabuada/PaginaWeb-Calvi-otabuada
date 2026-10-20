@@ -87,6 +87,21 @@ export default function Home() {
 
   const location = useLocation()
 
+  // El navegador restaura solo la posición de scroll al recargar. En una home
+  // con splash eso desorienta: mirás la intro y aparecés a mitad de página sin
+  // haber hecho nada. Salvo que se venga con un destino explícito, el inicio
+  // abre por arriba.
+  useEffect(() => {
+    const hayDestino = location.state?.scrollTo || location.hash
+    if (hayDestino) return
+    const previo = 'scrollRestoration' in history ? history.scrollRestoration : null
+    if (previo !== null) history.scrollRestoration = 'manual'
+    window.scrollTo({ top: 0, behavior: 'instant' })
+    return () => { if (previo !== null) history.scrollRestoration = previo }
+    // Solo al montar: después de eso, el scroll es del visitante.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Al llegar desde otra página con "Consultar", el salto se hace recién cuando
   // el splash soltó el scroll. Va instantáneo a propósito: la página tiene
   // scroll-behavior:smooth global, y un recorrido suave de ~6000px se cancela
@@ -97,12 +112,17 @@ export default function Home() {
     if (!destino || !splashDone) return
     const t = setTimeout(() => {
       const el = document.getElementById(destino)
-      if (!el) return
-      const y = el.getBoundingClientRect().top + window.scrollY - 70  // deja aire bajo el navbar
-      window.scrollTo({ top: y, behavior: 'instant' })
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 70  // deja aire bajo el navbar
+        window.scrollTo({ top: y, behavior: 'instant' })
+      }
+      // El destino se consume una sola vez. React Router guarda el state en la
+      // entrada del historial, así que sin esto un F5 —o volver a esa entrada—
+      // repetiría el salto y el inicio dejaría de abrir por arriba.
+      navigate('/', { replace: true, state: null })
     }, 60)
     return () => clearTimeout(t)
-  }, [location.key, location.state, location.hash, splashDone])
+  }, [location.key, location.state, location.hash, splashDone, navigate])
 
   // Splash screen
   useEffect(() => {
