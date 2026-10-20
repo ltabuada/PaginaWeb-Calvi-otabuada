@@ -40,9 +40,12 @@ Rule of thumb: **weight carries hierarchy, color carries one voice.** A heading
 is dark ink with a teal emphasis span — never two saturated colors side by side.
 On dark sections that emphasis switches to `--brand-on-dark`.
 
-Typography: Source Serif 4 (display/headings, weight 600) + Inter (UI/body).
-Source Serif replaced Fraunces, whose soft-serif quirk read as decorative rather
-than established; 700/800 weights were pulled back to 600 across serif headings.
+Typography: **Schibsted Grotesk** for everything, one family, hierarchy by
+weight. 400/500 for body, 700 with -0.028em tracking for headings. It went
+Fraunces → Source Serif 4 → Inter Tight → here: Fraunces read decorative, and
+Inter is the single most over-used face in generated interfaces (the detector
+flagged it 36 times). Schibsted is drawn for Norwegian press, so it holds both
+running text and headlines, and its a/g/R carry character Inter does not.
 
 The two blueprint illustrations were generated in the old gold-on-indigo palette.
 Rather than regenerate them, they render with `mix-blend-mode: luminosity` over a
@@ -60,6 +63,34 @@ Direction: **diagonal / overlap continuous flow** (surface concept-seed key `814
 - Testimonios: the featured review is raised/scaled instead of sitting flush in a uniform grid.
 - CTA banner: second AI-generated blueprint illustration (`blueprint-complejo.webp`) as background texture.
 - Section seams use matched `clip-path: polygon(...)` cuts + negative margins (hero↔servicios pair uses the same 90px value on both sides so the diagonal nests without a gap).
+
+## Motion
+
+One authored moment, nothing else animates on arrival.
+
+**The opening** comes from the isologo: two offset squares meet, the gold seam
+lands where they overlap, and the curtain pulls back on the same diagonal the
+section seams use. 1.5s total, down from the old 3.2s splash — an intro that
+makes you wait stops being an intro. The hero's lines then rise out of a mask
+so the entrance reads as one piece instead of two chained animations.
+
+What was removed and why: every section had the identical fade-and-rise on
+scroll, which is the clearest tell of generated motion. Staggered entrances
+survive only where a list appears as a list (listing cards, testimonials, the
+process steps, which are an actual sequence), capped at three steps.
+
+Supporting motion only answers an action: links grow their underline from the
+left, cards lift once while their photo eases in, buttons compress on press,
+service rows tint on hover. `prefers-reduced-motion` drops the movement and
+keeps the state changes.
+
+Animated content is visible by default — the displacement lives inside the
+keyframe with `both` fill, so a stylesheet that never runs cannot hide the page.
+
+## Browser surfaces
+
+Selection, caret, scrollbar, focus ring, underline offset and tabular numerals
+are themed from the palette rather than left to the browser.
 
 ## Assets
 

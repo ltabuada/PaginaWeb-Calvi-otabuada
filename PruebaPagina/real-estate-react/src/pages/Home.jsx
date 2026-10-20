@@ -127,8 +127,8 @@ export default function Home() {
   // Splash screen
   useEffect(() => {
     document.body.style.overflow = 'hidden'
-    const t1 = setTimeout(() => setSplashExit(true), 2200)
-    const t2 = setTimeout(() => { setSplashDone(true); document.body.style.overflow = '' }, 3200)
+    const t1 = setTimeout(() => setSplashExit(true), 900)
+    const t2 = setTimeout(() => { setSplashDone(true); document.body.style.overflow = '' }, 1600)
     return () => { clearTimeout(t1); clearTimeout(t2); document.body.style.overflow = '' }
   }, [])
   useEffect(() => {
@@ -147,7 +147,7 @@ export default function Home() {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible') })
     }, { threshold: 0.1 })
-    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el))
+    document.querySelectorAll('.aparece').forEach(el => observer.observe(el))
     return () => observer.disconnect()
   }, [])
 
@@ -202,13 +202,13 @@ export default function Home() {
 
   return (
     <>
-      {/* SPLASH */}
+      {/* APERTURA — los dos cuadrados del isologo abren la página */}
       {!splashDone && (
-        <div className={`splash${splashExit ? ' splash--exit' : ''}`}>
-          <div className="splash-inner">
-            <img className="splash-logo" src="/LogoInicio.png" alt="Calviño Tabuada Propiedades" />
-            <div className="splash-line" />
-            <p className="splash-tagline">Alquilá · Comprá · Vendé</p>
+        <div className={`apertura${splashExit ? ' apertura--sale' : ''}`} aria-hidden="true">
+          <div className="apertura-marca">
+            <span className="apertura-cuadro apertura-cuadro--uno" />
+            <span className="apertura-cuadro apertura-cuadro--dos" />
+            <span className="apertura-cuadro apertura-cuadro--costura" />
           </div>
         </div>
       )}
@@ -225,25 +225,26 @@ export default function Home() {
         </div>
         <div className="hero-overlay" />
         <div className="hero-content">
-          <div className="hero-tag">
-            <span className="dot" /> Alquiler · Venta · Inversión
-          </div>
+          <span className="linea-mascara">
+            <img
+              src="/LogoInicio.png"
+              alt="Calviño Tabuada Propiedades"
+              style={{
+                width: '100%',
+                maxWidth: '620px',
+                height: 'clamp(5rem, 11vw, 9rem)',
+                objectFit: 'contain',
+                objectPosition: 'left center',
+                display: 'block',
+                margin: '0 0 1.2rem',
+                '--retraso': '.95s',
+              }}
+            />
+          </span>
 
-          <img
-            src="/LogoInicio.png"
-            alt="Calvi Propiedades"
-            style={{
-              width: '100%',
-              maxWidth: '620px',
-              height: 'clamp(5rem, 11vw, 9rem)',
-              objectFit: 'contain',
-              objectPosition: 'left center',
-              display: 'block',
-              margin: '0 0 1.2rem',
-            }}
-          />
-
-          <p>Alquilá, comprá, vendé o tasá tu propiedad con nuestro respaldo</p>
+          <span className="linea-mascara" style={{ '--retraso': '1.08s' }}>
+            <p>Alquilá, comprá, vendé o tasá tu propiedad con nuestro respaldo</p>
+          </span>
 
           <div className="hero-search">
             <div className="search-field">
@@ -298,7 +299,7 @@ export default function Home() {
       {/* SERVICIOS — editorial asimétrico */}
       <section className="servicios" id="servicios">
         <div className="servicios-editorial">
-          <div className="servicios-visual fade-up">
+          <div className="servicios-visual">
             <div className="servicios-visual-img">
               <img src="/Ceretti3265.jpeg" alt="Edificio Ceretti - Calviño Tabuada Propiedades" />
             </div>
@@ -312,13 +313,11 @@ export default function Home() {
           </div>
 
           <div className="servicios-list">
-            <div className="section-header fade-up">
-              <div className="section-tag">Lo que hacemos</div>
+            <div className="section-header">
               <h2>Servicios integrales<br /><span>para cada necesidad</span></h2>
             </div>
             {SERVICIOS.map((s, i) => (
-              <div key={s.id} className="servicio-row fade-up">
-                <span className="servicio-num">{String(i + 1).padStart(2, '0')}</span>
+              <div key={s.id} className="servicio-row">
                 <div className={`servicio-row-icon servicio-icon--${s.tipo}`}>
                   <i className={`fa-solid ${s.icon}`} />
                 </div>
@@ -341,9 +340,8 @@ export default function Home() {
       {/* EMPRENDIMIENTOS */}
       <section className="emprendimientos-section" id="emprendimientos">
         <div className="container">
-          <div className="emprendimientos-inner fade-up">
+          <div className="emprendimientos-inner">
             <div className="emprendimientos-text">
-              <div className="section-tag">Proyectos en desarrollo</div>
               <h2>Emprendimientos<br /><span>inmobiliarios</span></h2>
               <p>Invertí desde el pozo en proyectos seleccionados. Te acompañamos en cada etapa. Accedé a las mejores condiciones de pago y financiamiento directo con el desarrollador.</p>
               <ul className="emprendimientos-beneficios">
@@ -361,17 +359,17 @@ export default function Home() {
                 <img src="/blueprint-edificio.webp" alt="Plano de emprendimiento en desarrollo" />
               </div>
               <div className="emp-cards-stack">
-                <div className="emp-card fade-up">
+                <div className="emp-card aparece" style={{ '--orden': 0 }}>
                   <div className="emp-card-icon"><i className="fa-solid fa-building-columns" /></div>
                   <strong>Inversión desde el pozo</strong>
                   <span>Las mejores unidades al precio más bajo</span>
                 </div>
-                <div className="emp-card fade-up">
+                <div className="emp-card aparece" style={{ '--orden': 1 }}>
                   <div className="emp-card-icon"><i className="fa-solid fa-file-contract" /></div>
                   <strong>Gestión completa</strong>
                   <span>Nos encargamos de toda la documentación</span>
                 </div>
-                <div className="emp-card fade-up">
+                <div className="emp-card aparece" style={{ '--orden': 2 }}>
                   <div className="emp-card-icon"><i className="fa-solid fa-chart-line" /></div>
                   <strong>Rentabilidad garantizada</strong>
                   <span>Proyectos con alta demanda</span>
@@ -387,7 +385,6 @@ export default function Home() {
         <div className="container">
           <div className="section-header">
             <div>
-              <div className="section-tag">Propiedades destacadas</div>
               <h2>Las mejores opciones<br /><span>del momento</span></h2>
             </div>
             <Link to="/propiedades" className="ver-todas-link">
@@ -413,7 +410,7 @@ export default function Home() {
           )}
           <div className="text-center" style={{ marginTop: '3rem' }}>
             <Link to="/propiedades" className="btn-primary">
-              Explorar todas las propiedades <i className="fa-solid fa-arrow-right" />
+              Explorar todas las propiedades
             </Link>
           </div>
         </div>
@@ -434,7 +431,6 @@ export default function Home() {
               </div>
             </div>
             <div className="nosotros-content">
-              <div className="section-tag">¿Quiénes somos?</div>
               <h2>Una inmobiliaria que<br /><span>trabaja para vos</span></h2>
               <div className="nosotros-items">
                 {['Propiedades verificadas', 'Atención personalizada', 'Trámites rápidos y seguros', 'Asesoramiento legal incluido'].map(item => (
@@ -452,8 +448,7 @@ export default function Home() {
       {/* TESTIMONIOS */}
       <section className="testimonios" id="testimonios">
         <div className="container">
-          <div className="section-header section-header--center fade-up">
-            <div className="section-tag">Lo que dicen nuestros clientes</div>
+          <div className="section-header section-header--center">
             <h2>Reseñas de quienes<br /><span>ya confiaron en nosotros</span></h2>
             <div className="testimonios-rating-header">
               <span className="testimonios-score">4.9</span>
@@ -465,7 +460,7 @@ export default function Home() {
           </div>
           <div className="testimonios-grid">
             {TESTIMONIOS.map((t, i) => (
-              <div key={i} className={`testimonio fade-up${t.destacado ? ' testimonio--destacado' : ''}`}>
+              <div key={i} className={`testimonio aparece${t.destacado ? ' testimonio--destacado' : ''}`}>
                 <div className="testimonio-top">
                   <div className="estrellas">{'★'.repeat(t.estrellas)}</div>
                   <i className="fa-solid fa-quote-right quote-icon" />
@@ -488,7 +483,6 @@ export default function Home() {
       <section className="como-funciona">
         <div className="container">
           <div className="section-header section-header--center">
-            <div className="section-tag">Proceso simple</div>
             <h2>¿Cómo trabajamos<br /><span>con vos?</span></h2>
           </div>
           <div className="pasos-grid">
@@ -499,7 +493,7 @@ export default function Home() {
               { num: '04', icon: 'fa-file-signature', title: 'Cierre seguro', desc: 'Gestionamos toda la documentación para que tu operación sea rápida y sin inconvenientes.' },
             ].map((paso, i, arr) => (
               <Fragment key={paso.num}>
-                <div className="paso fade-up" style={{ '--stagger': `${-i * 26}px` }}>
+                <div className="paso aparece" style={{ '--stagger': `${-i * 26}px`, '--orden': i }}>
                   <div className="paso-num">{paso.num}</div>
                   <div className="paso-icon"><i className={`fa-solid ${paso.icon}`} /></div>
                   <h3>{paso.title}</h3>
@@ -531,7 +525,6 @@ export default function Home() {
       <section className="contacto" id="contacto">
         <div className="container">
           <div className="section-header section-header--center">
-            <div className="section-tag">Contacto</div>
             <h2>¿Tenés alguna consulta?<br /><span>Escribinos</span></h2>
           </div>
           <div className="contacto-wrapper">

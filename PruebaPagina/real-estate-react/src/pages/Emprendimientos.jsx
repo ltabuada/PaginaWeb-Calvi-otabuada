@@ -21,7 +21,7 @@ export default function Emprendimientos() {
   }, [])
 
   useEffect(() => {
-    document.querySelectorAll('.fade-up').forEach(el => observerRef.current?.observe(el))
+    document.querySelectorAll('.aparece').forEach(el => observerRef.current?.observe(el))
   }, [emprendimientosActivos])
 
   return (
@@ -38,9 +38,8 @@ export default function Emprendimientos() {
       {/* QUÉ ES UN EMPRENDIMIENTO */}
       <section className="emp-info-section">
         <div className="container">
-          <div className="emp-info-grid fade-up">
+          <div className="emp-info-grid">
             <div className="emp-info-text">
-              <div className="section-tag">¿Qué es un emprendimiento?</div>
               <h2>Invertí en proyectos<br /><span>en construcción</span></h2>
               <p>Un emprendimiento inmobiliario es un proyecto de construcción en desarrollo donde podés adquirir una unidad desde el pozo —es decir, antes de que esté terminada— a un precio significativamente menor al del mercado final.</p>
               <p style={{ marginTop: '1rem' }}>Es una de las formas más rentables de inversión inmobiliaria: comprás barato, el valor sube a medida que avanza la obra, y al momento de la entrega ya tenés una plusvalía importante.</p>
@@ -51,8 +50,8 @@ export default function Emprendimientos() {
                 { icon: 'fa-calendar-days', title: 'Cuotas accesibles', desc: 'Financiación directa con el desarrollador durante toda la obra.' },
                 { icon: 'fa-shield-halved', title: 'Inversión segura', desc: 'Proyectos seleccionados con desarrolladores de trayectoria comprobada.' },
                 { icon: 'fa-key', title: 'Llave en mano', desc: 'Te acompañamos desde la firma hasta la escritura y entrega.' },
-              ].map(item => (
-                <div key={item.title} className="emp-info-card fade-up">
+              ].map((item, i) => (
+                <div key={item.title} className="emp-info-card aparece" style={{ '--orden': i }}>
                   <div className="emp-info-icon"><i className={`fa-solid ${item.icon}`} /></div>
                   <div>
                     <strong>{item.title}</strong>
@@ -68,15 +67,14 @@ export default function Emprendimientos() {
       {/* EMPRENDIMIENTOS VIGENTES */}
       <section className="emp-vigentes-section">
         <div className="container">
-          <div className="section-header section-header--center fade-up">
-            <div className="section-tag">Disponibles ahora</div>
+          <div className="section-header section-header--center">
             <h2>Emprendimientos<br /><span>vigentes</span></h2>
           </div>
 
           {loading ? (
-            <div className="emp-empty fade-up"><p>Cargando...</p></div>
+            <div className="emp-empty"><p>Cargando...</p></div>
           ) : emprendimientosActivos.length === 0 ? (
-            <div className="emp-empty fade-up">
+            <div className="emp-empty">
               <div className="emp-empty-icon"><i className="fa-solid fa-building-circle-arrow-right" /></div>
               <h3>Próximamente nuevos proyectos</h3>
               <p>Estamos incorporando nuevos emprendimientos a nuestra cartera. Dejanos tu consulta y te avisamos en cuanto estén disponibles.</p>
@@ -86,8 +84,8 @@ export default function Emprendimientos() {
             </div>
           ) : (
             <div className="emp-cards-grid">
-              {emprendimientosActivos.map(e => (
-                <div key={e.id} className="emp-listing-card fade-up">
+              {emprendimientosActivos.map((e, i) => (
+                <div key={e.id} className="emp-listing-card aparece" style={{ '--orden': i % 3 }}>
                   <div className="emp-listing-img">
                     <img src={imgCard(e.imagenes?.[0])} alt={e.titulo} loading="lazy" onError={ev => ev.currentTarget.classList.add('no-img')} />
                     <span className={`emp-badge ${ESTADO_COLOR[e.estado]}`}>{ESTADO_LABEL[e.estado]}</span>
@@ -108,7 +106,7 @@ export default function Emprendimientos() {
                       )}
                     </div>
                     <Link to="/" state={{ scrollTo: 'contacto' }} className="btn-primary btn-full">
-                      Consultar <i className="fa-solid fa-arrow-right" />
+                      Consultar
                     </Link>
                   </div>
                 </div>
