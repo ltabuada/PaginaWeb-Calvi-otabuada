@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
+import { waLink } from '../lib/contacto'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -23,11 +24,11 @@ export default function Navbar() {
           <li><NavLink to="/propiedades" onClick={() => setMenuOpen(false)}>Propiedades</NavLink></li>
           <li><NavLink to="/emprendimientos" onClick={() => setMenuOpen(false)}>Emprendimientos</NavLink></li>
           <li><a href="/#nosotros" onClick={() => setMenuOpen(false)}>Nosotros</a></li>
-          <li><a href="/#contacto" onClick={() => setMenuOpen(false)}>Contacto</a></li>
+          <li><Link to="/" state={{ scrollTo: 'contacto' }} onClick={() => setMenuOpen(false)}>Contacto</Link></li>
         </ul>
 
         <div className="nav-actions">
-          <a href="https://wa.me/5491145713005" className="nav-cta" target="_blank" rel="noopener noreferrer">
+          <a href={waLink('general')} className="nav-cta" target="_blank" rel="noopener noreferrer">
             <i className="fa-brands fa-whatsapp" /> <span>Contactanos</span>
           </a>
           <button className="hamburger" onClick={() => setMenuOpen(o => !o)}>

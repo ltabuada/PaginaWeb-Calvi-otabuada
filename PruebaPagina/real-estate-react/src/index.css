@@ -78,7 +78,7 @@ body {
 .container { max-width: 1240px; margin: 0 auto; padding: 0 2rem; }
 .text-center { text-align: center; }
 
-h1, h2 { font-family: 'Source Serif 4', Georgia, serif; letter-spacing: -0.015em; }
+h1, h2 { font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; letter-spacing: -0.028em; }
 
 /* ===== NAVBAR ===== */
 .navbar {
@@ -182,7 +182,7 @@ h1, h2 { font-family: 'Source Serif 4', Georgia, serif; letter-spacing: -0.015em
   font-weight: 700; color: white; line-height: 1.08; margin-bottom: 1.5rem;
   letter-spacing: -0.5px;
 }
-.hero-content h1 .highlight { color: var(--gold-light); font-style: italic; }
+.hero-content h1 .highlight { color: var(--gold-light); font-style: normal; }
 .hero-content > p {
   font-size: 1rem; color: rgba(255,255,255,0.65); font-weight: 400;
   line-height: 1.7; margin-bottom: 3rem;
@@ -229,7 +229,7 @@ h1, h2 { font-family: 'Source Serif 4', Georgia, serif; letter-spacing: -0.015em
   backdrop-filter: blur(12px); border-radius: 60px; padding: 14px 30px;
 }
 .hero-stat { text-align: center; }
-.hero-stat strong { display: block; font-size: 1.3rem; font-weight: 600; color: var(--gold-light); font-family: 'Source Serif 4', Georgia, serif; }
+.hero-stat strong { display: block; font-size: 1.3rem; font-weight: 700; color: var(--gold-light); font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; }
 .hero-stat span { font-size: 0.72rem; color: rgba(255,255,255,0.5); font-weight: 400; letter-spacing: 0.5px; }
 .hero-stat-divider { width: 1px; height: 32px; background: rgba(255,255,255,0.15); }
 .hero-dots {
@@ -314,7 +314,7 @@ h1, h2 { font-family: 'Source Serif 4', Georgia, serif; letter-spacing: -0.015em
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='2' width='12' height='12' fill='%23ffffff'/%3E%3Crect x='8' y='8' width='12' height='12' fill='%23ffffff'/%3E%3Crect x='8' y='8' width='6' height='6' fill='%23f5b90e'/%3E%3C/svg%3E");
   background-size: contain; background-repeat: no-repeat;
 }
-.servicios-visual-tag strong { display: block; font-family: 'Source Serif 4', Georgia, serif; font-size: 1.15rem; }
+.servicios-visual-tag strong { display: block; font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; font-size: 1.15rem; }
 .servicios-visual-tag span { font-size: 0.8rem; color: rgba(255,255,255,0.6); }
 
 .servicios-list .section-header { margin-bottom: 3rem; }
@@ -326,7 +326,7 @@ h1, h2 { font-family: 'Source Serif 4', Georgia, serif; letter-spacing: -0.015em
 .servicios-list .servicio-row:last-child { border-bottom: 1px solid var(--border-2); }
 .servicio-row:hover { padding-left: 0.6rem; background: var(--cream); }
 .servicio-num {
-  font-family: 'Source Serif 4', Georgia, serif; font-size: 1.6rem; font-weight: 600;
+  font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; font-size: 1.6rem; font-weight: 700;
   color: var(--border); line-height: 1; transition: var(--transition);
 }
 .servicio-row:hover .servicio-num { color: var(--gold); }
@@ -339,7 +339,7 @@ h1, h2 { font-family: 'Source Serif 4', Georgia, serif; letter-spacing: -0.015em
 .servicio-icon--venta { background: rgba(27,111,112,0.12); color: var(--gold-dark); }
 .servicio-icon--tasacion { background: rgba(14,124,125,0.1); color: var(--teal-dark); }
 .servicio-icon--inversion { background: rgba(34,197,94,0.08); color: #15803d; }
-.servicio-row-body h3 { font-size: 1.2rem; font-weight: 600; color: var(--navy); font-family: 'Source Serif 4', Georgia, serif; margin-bottom: 0.5rem; }
+.servicio-row-body h3 { font-size: 1.2rem; font-weight: 700; color: var(--navy); font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; margin-bottom: 0.5rem; }
 .servicio-row-body > p { font-size: 0.9rem; color: var(--text-2); line-height: 1.7; margin-bottom: 0.9rem; max-width: 480px; }
 .servicio-items { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; margin-bottom: 0.9rem; }
 .servicio-items li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--text); }
@@ -378,7 +378,7 @@ section { padding: 90px 0; }
   background-size: contain; background-repeat: no-repeat;
 }
 .section-header h2 {
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 600;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700;
   color: var(--navy); line-height: 1.15;
 }
 .section-header h2 span { color: var(--gold); }
@@ -440,14 +440,14 @@ section { padding: 90px 0; }
 .card-badge-op--venta { background: var(--gold); color: #fff; }
 .card-body { padding: 1.5rem; }
 .card-tipo { font-size: 0.7rem; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem; }
-.card-body h3 { font-size: 1.05rem; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem; font-family: 'Source Serif 4', Georgia, serif; }
+.card-body h3 { font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; }
 .card-ubicacion { display: flex; align-items: center; gap: 5px; color: var(--text-2); font-size: 0.82rem; margin-bottom: 1.1rem; }
 .card-ubicacion i { color: var(--gold); font-size: 0.8rem; }
 .card-features { display: flex; gap: 1.2rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
 .feature { display: flex; align-items: center; gap: 4px; font-size: 0.78rem; color: var(--text-2); }
 .feature i { color: var(--gold); font-size: 0.8rem; }
 .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 1.1rem; border-top: 1px solid var(--border-2); }
-.card-precio { font-size: 1.15rem; font-weight: 600; color: var(--navy); font-family: 'Source Serif 4', Georgia, serif; }
+.card-precio { font-size: 1.15rem; font-weight: 700; color: var(--navy); font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; }
 .card-precio span { font-size: 0.75rem; color: var(--text-3); font-weight: 400; font-family: 'Inter', sans-serif; }
 .card-btn {
   background: var(--navy); color: white; border: none;
@@ -492,8 +492,8 @@ section { padding: 90px 0; }
 .emprendimientos-text .section-tag::before, .testimonios .section-tag::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='2' width='12' height='12' fill='%23ffffff' fill-opacity='0.9'/%3E%3Crect x='8' y='8' width='12' height='12' fill='%23ffffff' fill-opacity='0.9'/%3E%3Crect x='8' y='8' width='6' height='6' fill='%23f5b90e'/%3E%3C/svg%3E");
 }
-.emprendimientos-text h2 { color: white; font-weight: 600; }
-.emprendimientos-text h2 span { color: var(--gold-light); font-style: italic; }
+.emprendimientos-text h2 { color: white; font-weight: 700; }
+.emprendimientos-text h2 span { color: var(--gold-light); font-style: normal; }
 .emprendimientos-text p { color: rgba(255,255,255,0.6); margin-top: 1.2rem; line-height: 1.8; font-size: 0.95rem; }
 .emprendimientos-beneficios { list-style: none; padding: 0; margin: 1.8rem 0 2.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
 .emprendimientos-beneficios li { color: rgba(255,255,255,0.8); display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; }
@@ -572,7 +572,7 @@ section { padding: 90px 0; }
 .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
 .consulta-nombre { font-size: 1rem; font-weight: 700; color: var(--navy); }
 .consulta-tipo-badge { font-size: .75rem; font-weight: 600; padding: .2rem .65rem; border-radius: 999px; background: rgba(27,111,112,0.1); color: var(--gold-dark); display: flex; align-items: center; gap: .3rem; }
-.consulta-asunto { font-size: .78rem; color: var(--text-2); font-style: italic; }
+.consulta-asunto { font-size: .78rem; color: var(--text-2); font-style: normal; }
 .consulta-fecha { font-size: .78rem; color: var(--text-3); white-space: nowrap; }
 .consulta-contacto { display: flex; gap: 1.2rem; margin-bottom: .75rem; flex-wrap: wrap; }
 .consulta-email, .consulta-tel { font-size: .83rem; color: var(--gold-dark); font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: .35rem; }
@@ -605,10 +605,10 @@ section { padding: 90px 0; }
   padding: 1.1rem 1.3rem; border-radius: var(--radius);
   text-align: center; box-shadow: 0 12px 30px rgba(27,111,112,0.35);
 }
-.nosotros-badge strong { display: block; font-size: 1.7rem; font-weight: 600; font-family: 'Source Serif 4', Georgia, serif; }
+.nosotros-badge strong { display: block; font-size: 1.7rem; font-weight: 700; font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; }
 .nosotros-badge span { font-size: 0.7rem; font-weight: 600; line-height: 1.3; letter-spacing: 0.5px; }
-.nosotros-content h2 { font-size: clamp(1.7rem, 2.5vw, 2.4rem); font-weight: 600; color: var(--navy); margin-bottom: 1.2rem; }
-.nosotros-content h2 span { color: var(--gold); font-style: italic; }
+.nosotros-content h2 { font-size: clamp(1.7rem, 2.5vw, 2.4rem); font-weight: 700; color: var(--navy); margin-bottom: 1.2rem; }
+.nosotros-content h2 span { color: var(--gold); font-style: normal; }
 .nosotros-content > p { color: var(--text-2); line-height: 1.8; font-size: 0.95rem; margin-bottom: 1rem; }
 .nosotros-items { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 1.5rem 0 2rem; }
 .nosotros-item { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; font-weight: 500; color: var(--text); }
@@ -661,7 +661,7 @@ section { padding: 90px 0; }
 .testimonio-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
 .estrellas { color: var(--accent); font-size: 0.9rem; letter-spacing: 2px; }
 .quote-icon { color: rgba(27,111,112,0.3); font-size: 1.4rem; }
-.testimonio p { color: rgba(255,255,255,0.6); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.5rem; font-style: italic; }
+.testimonio p { color: rgba(255,255,255,0.6); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.5rem; font-style: normal; }
 .testimonio-autor { display: flex; align-items: center; gap: 0.8rem; }
 .avatar {
   width: 40px; height: 40px; background: linear-gradient(135deg, var(--gold), var(--gold-dark));
@@ -672,7 +672,7 @@ section { padding: 90px 0; }
 .testimonio-autor span { color: rgba(255,255,255,0.35); font-size: 0.75rem; }
 .testimonios .section-tag { color: var(--gold-light); }
 .testimonios-rating-header { display: flex; align-items: center; gap: 1rem; justify-content: center; margin-top: 1rem; margin-bottom: 0.5rem; }
-.testimonios-score { font-size: 3.2rem; font-weight: 600; color: var(--gold-light); font-family: 'Source Serif 4', Georgia, serif; line-height: 1; }
+.testimonios-score { font-size: 3.2rem; font-weight: 700; color: var(--gold-light); font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; line-height: 1; }
 .testimonios-score-info .estrellas { font-size: 1.1rem; letter-spacing: 3px; }
 .testimonios-total { font-size: 0.78rem; color: rgba(255,255,255,0.4); margin-top: 3px; display: block; }
 
@@ -719,7 +719,7 @@ section { padding: 90px 0; }
   background-blend-mode: normal, luminosity;
 }
 .cta-content { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
-.cta-text h2 { font-size: clamp(1.7rem, 3vw, 2.5rem); font-weight: 600; color: white; margin-bottom: 0.6rem; }
+.cta-text h2 { font-size: clamp(1.7rem, 3vw, 2.5rem); font-weight: 700; color: white; margin-bottom: 0.6rem; }
 .cta-text p { color: rgba(255,255,255,0.55); font-size: 0.95rem; }
 .cta-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
 .cta-banner .btn-primary { background: var(--gold); color: #fff; }
@@ -728,7 +728,7 @@ section { padding: 90px 0; }
 /* ===== CONTACTO ===== */
 .contacto { background: var(--cream); }
 .contacto-wrapper { display: grid; grid-template-columns: 1fr 1.7fr; gap: 5rem; margin-top: 1rem; }
-.contacto-info h3 { font-size: 1.3rem; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem; font-family: 'Source Serif 4', Georgia, serif; }
+.contacto-info h3 { font-size: 1.3rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; }
 .contacto-info > p { color: var(--text-2); font-size: 0.9rem; line-height: 1.6; margin-bottom: 2rem; }
 .info-items { display: flex; flex-direction: column; gap: 1.4rem; margin-bottom: 2rem; }
 .info-item { display: flex; align-items: flex-start; gap: 1rem; }
@@ -792,7 +792,7 @@ section { padding: 90px 0; }
   background: radial-gradient(circle at 50% 100%, rgba(27,111,112,0.1), transparent 60%);
 }
 .page-header-content { position: relative; z-index: 1; }
-.page-header h1 { font-size: clamp(2.2rem, 4.5vw, 3.5rem); font-weight: 600; color: white; margin-bottom: 0.7rem; }
+.page-header h1 { font-size: clamp(2.2rem, 4.5vw, 3.5rem); font-weight: 700; color: white; margin-bottom: 0.7rem; }
 .page-header p { color: rgba(255,255,255,0.45); font-size: 1rem; }
 
 /* ===== LISTINGS PAGE ===== */
@@ -856,7 +856,7 @@ section { padding: 90px 0; }
 .galeria-img:hover .overlay { background: rgba(0,0,0,0.25); opacity: 1; }
 .detail-main { display: grid; grid-template-columns: 1fr 370px; gap: 2.5rem; align-items: start; }
 .detail-precio-row { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.5rem; }
-.detail-precio { font-size: 2.2rem; font-weight: 600; color: var(--navy); font-family: 'Source Serif 4', Georgia, serif; }
+.detail-precio { font-size: 2.2rem; font-weight: 700; color: var(--navy); font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; }
 .detail-precio-mes { font-size: 0.9rem; color: var(--text-2); font-weight: 400; }
 .detail-features { display: flex; gap: 2rem; padding: 1.5rem; background: var(--cream); border-radius: var(--radius); border: 1px solid var(--border-2); margin-bottom: 2rem; flex-wrap: wrap; }
 .detail-feature { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; }
@@ -911,7 +911,7 @@ section { padding: 90px 0; }
 .contacto-card h3 { font-size: 1.1rem; font-weight: 600; color: var(--navy); margin-bottom: 0.4rem; }
 .contacto-card > p { color: var(--text-2); font-size: 0.85rem; margin-bottom: 1.5rem; }
 .precio-sidebar { background: var(--cream); padding: 1rem 1.2rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; display: flex; align-items: baseline; gap: 5px; border: 1px solid var(--border-2); }
-.precio-sidebar strong { font-size: 1.4rem; font-weight: 600; color: var(--navy); font-family: 'Source Serif 4', Georgia, serif; }
+.precio-sidebar strong { font-size: 1.4rem; font-weight: 700; color: var(--navy); font-family: 'Inter Tight', 'Inter', system-ui, sans-serif; }
 .precio-sidebar span { font-size: 0.85rem; color: var(--text-2); }
 .form-contacto { display: flex; flex-direction: column; gap: 0.8rem; }
 .form-contacto input, .form-contacto textarea {
@@ -1165,3 +1165,51 @@ section { padding: 90px 0; }
 .cta-banner h2 span,
 .page-header h1 span,
 .detail-hero h1 span { color: var(--brand-on-dark); }
+
+/* ── WhatsApp flotante con selección de número ───────────────────────────────
+   Alquileres y consultas generales atienden en números distintos, así que el
+   botón abre un menú en vez de ir directo al chat.                            */
+.wa-float { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; gap: .75rem; }
+
+.wa-boton {
+  width: 58px; height: 58px; border-radius: 50%; border: none; cursor: pointer;
+  background: #25d366; color: #fff; font-size: 1.65rem; display: grid; place-items: center;
+  box-shadow: 0 8px 26px rgba(37,211,102,.4); transition: var(--transition); position: relative;
+}
+.wa-boton:hover { transform: scale(1.07); box-shadow: 0 10px 32px rgba(37,211,102,.5); }
+.wa-float--open .wa-boton { background: var(--ink); box-shadow: 0 8px 26px rgba(19,41,61,.35); }
+.wa-boton i { grid-area: 1 / 1; transition: opacity .18s, transform .18s; }
+.wa-icono-cerrar { font-size: 1.3rem; }
+.wa-icono--oculto { opacity: 0; transform: scale(.6); }
+
+.wa-menu {
+  background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  border: 1px solid var(--line); overflow: hidden; width: 272px;
+  opacity: 0; visibility: hidden; transform: translateY(10px) scale(.96); transform-origin: bottom right;
+  transition: opacity .2s ease, transform .2s cubic-bezier(.4,0,.2,1), visibility .2s;
+}
+.wa-float--open .wa-menu { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+
+.wa-menu-head {
+  padding: .8rem 1rem; font-size: .76rem; font-weight: 600; letter-spacing: .04em;
+  color: var(--ink-2); background: var(--surface); border-bottom: 1px solid var(--line);
+}
+.wa-opcion {
+  display: flex; align-items: flex-start; gap: .8rem; padding: .85rem 1rem;
+  text-decoration: none; transition: background .18s; border-bottom: 1px solid var(--line-2);
+}
+.wa-opcion:last-child { border-bottom: none; }
+.wa-opcion:hover, .wa-opcion:focus-visible { background: var(--brand-soft); outline: none; }
+.wa-opcion-icono {
+  width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; display: grid; place-items: center;
+  background: var(--brand); color: #fff; font-size: .9rem;
+}
+.wa-opcion-texto { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.wa-opcion-texto strong { font-size: .875rem; color: var(--ink); font-weight: 600; }
+.wa-opcion-texto small { font-size: .72rem; color: var(--ink-2); line-height: 1.35; }
+.wa-opcion-texto em { font-size: .72rem; color: var(--brand); font-style: normal; font-weight: 600; margin-top: 2px; }
+
+@media (max-width: 640px) {
+  .wa-float { bottom: 1.2rem; right: 1.2rem; }
+  .wa-menu { width: min(272px, calc(100vw - 2.4rem)); }
+}

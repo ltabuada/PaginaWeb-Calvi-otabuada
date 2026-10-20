@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { waLink } from '../lib/contacto'
 
 export default function Footer() {
   return (
@@ -11,7 +12,7 @@ export default function Footer() {
             <div className="social-row">
               <a href="https://www.instagram.com/calvinotabuada/" className="social-btn social-btn--dark"><i className="fa-brands fa-instagram" /></a>
               <a href="https://www.facebook.com/inmobiliaria2804" className="social-btn social-btn--dark"><i className="fa-brands fa-facebook-f" /></a>
-              <a href="https://wa.me/5491145713005" className="social-btn social-btn--dark"><i className="fa-brands fa-whatsapp" /></a>
+              <a href={waLink('general')} className="social-btn social-btn--dark"><i className="fa-brands fa-whatsapp" /></a>
             </div>
           </div>
           <div className="footer-col">
@@ -21,7 +22,7 @@ export default function Footer() {
               <li><Link to="/propiedades">Propiedades</Link></li>
               <li><Link to="/emprendimientos">Emprendimientos</Link></li>
               <li><a href="/#nosotros">Nosotros</a></li>
-              <li><a href="/#contacto">Contacto</a></li>
+              <li><Link to="/" state={{ scrollTo: 'contacto' }}>Contacto</Link></li>
             </ul>
           </div>
           <div className="footer-col">

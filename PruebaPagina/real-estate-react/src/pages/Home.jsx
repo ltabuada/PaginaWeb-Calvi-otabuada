@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import PropiedadCard from '../components/PropiedadCard'
 import { useListings } from '../context/ListingsContext'
 import { useConsultas } from '../context/ConsultasContext'
+import WhatsAppFloat from '../components/WhatsAppFloat'
+import { waLink, WHATSAPP } from '../lib/contacto'
 
 const SLIDES = [
   '/fotoSlide.jpeg',
@@ -15,14 +17,14 @@ const SLIDES = [
 const SERVICIOS = [
   {
     id: 'alquiler', icon: 'fa-key', tipo: 'alquiler', titulo: 'Alquiler',
-    desc: 'Seleccioná dentro de nuestro catálogo. Te acompañamos desde la búsqueda hasta la firma del contrato.',
+    desc: 'Seleccioná dentro de nuestra cartera de propiedades. Te acompañamos desde la búsqueda hasta la firma del contrato.',
     items: ['Búsqueda personalizada', 'Gestión documental completa', 'Asesoramiento legal incluido'],
     linkTo: '/propiedades?operacion=alquiler', linkTexto: 'Ver propiedades en alquiler',
   },
   {
-    id: 'venta', icon: 'fa-handshake', tipo: 'venta', titulo: 'Compra y Venta',
+    id: 'venta', icon: 'fa-handshake', tipo: 'venta', titulo: 'Compra - Venta',
     desc: 'Te orientamos y asesoramos en cada paso del proceso de tu compra o venta de una propiedad.',
-    items: ['Tasación del inmueble', 'Estrategia de publicación', 'Acompañamiento en escritura'],
+    items: ['Tasación del inmueble', 'Estrategia de publicación', 'Asesoramiento durante la escritura'],
     linkTo: '/propiedades?operacion=venta', linkTexto: 'Ver propiedades en venta',
   },
   {
@@ -33,8 +35,8 @@ const SERVICIOS = [
   },
   {
     id: 'inversion', icon: 'fa-chart-line', tipo: 'inversion', titulo: 'Inversión Inmobiliaria',
-    desc: 'Te asesoramos para invertir en ladrillos con criterio, identificando las mejores oportunidades para maximizar tu rentabilidad.',
-    items: ['Análisis de rentabilidad', 'Selección de activos', 'Seguimiento post-inversión'],
+    desc: 'Asesoramiento para invertir en ladrillos con criterio, identificando las mejores oportunidades para maximizar tu rentabilidad.',
+    items: ['Análisis de rentabilidad', 'Selección de proyectos', 'Seguimiento post-inversión'],
     linkHref: '#contacto', linkTexto: 'Consultá nuestros asesores',
   },
 ]
@@ -82,6 +84,25 @@ export default function Home() {
   const [count120, setCount120] = useState(0)
   const [splashExit, setSplashExit] = useState(false)
   const [splashDone, setSplashDone] = useState(false)
+
+  const location = useLocation()
+
+  // Al llegar desde otra página con "Consultar", el salto se hace recién cuando
+  // el splash soltó el scroll. Va instantáneo a propósito: la página tiene
+  // scroll-behavior:smooth global, y un recorrido suave de ~6000px se cancela
+  // solo cuando las animaciones de entrada le cambian el alto por debajo.
+  // Además es lo que se espera de un "Consultar": aparecer ya en el formulario.
+  useEffect(() => {
+    const destino = location.state?.scrollTo || (location.hash ? location.hash.slice(1) : null)
+    if (!destino || !splashDone) return
+    const t = setTimeout(() => {
+      const el = document.getElementById(destino)
+      if (!el) return
+      const y = el.getBoundingClientRect().top + window.scrollY - 70  // deja aire bajo el navbar
+      window.scrollTo({ top: y, behavior: 'instant' })
+    }, 60)
+    return () => clearTimeout(t)
+  }, [location.key, location.state, location.hash, splashDone])
 
   // Splash screen
   useEffect(() => {
@@ -304,7 +325,7 @@ export default function Home() {
             <div className="emprendimientos-text">
               <div className="section-tag">Proyectos en desarrollo</div>
               <h2>Emprendimientos<br /><span>inmobiliarios</span></h2>
-              <p>Invertí desde el pozo en proyectos seleccionados. Te acompañamos en cada etapa: desde la elección de la unidad hasta la escrituración. Accedé a las mejores condiciones de pago y financiamiento directo con el desarrollador.</p>
+              <p>Invertí desde el pozo en proyectos seleccionados. Te acompañamos en cada etapa. Accedé a las mejores condiciones de pago y financiamiento directo con el desarrollador.</p>
               <ul className="emprendimientos-beneficios">
                 <li><i className="fa-solid fa-circle-check" /> Precio de lanzamiento</li>
                 <li><i className="fa-solid fa-circle-check" /> Financiación directa</li>
@@ -333,7 +354,7 @@ export default function Home() {
                 <div className="emp-card fade-up">
                   <div className="emp-card-icon"><i className="fa-solid fa-chart-line" /></div>
                   <strong>Rentabilidad garantizada</strong>
-                  <span>Proyectos con alta demanda de alquiler</span>
+                  <span>Proyectos con alta demanda</span>
                 </div>
               </div>
             </div>
@@ -356,7 +377,7 @@ export default function Home() {
           {destacadas.length === 0 ? (
             <div className="destacadas-empty">
               <i className="fa-solid fa-house-circle-check" />
-              <p>Estamos preparando nuestras próximas propiedades destacadas. Mientras tanto, explorá todo el catálogo disponible.</p>
+              <p>Estamos preparando nuestras próximas propiedades destacadas. Mientras tanto, explorá toda la cartera disponible.</p>
             </div>
           ) : (
             <div className="destacadas-bento">
@@ -502,7 +523,7 @@ export default function Home() {
                   { icon: 'fa-location-dot', label: 'Dirección', val: 'Av. Mosconi 2804, Buenos Aires' },
                   { icon: 'fa-phone', label: 'Teléfono', val: '+54 11 4571-3005' },
                   { icon: 'fa-envelope', label: 'Email', val: 'calvinotabuada@hotmail.com' },
-                  { icon: 'fa-brands fa-whatsapp', label: 'WhatsApp', val: '+54 9 11 4571-3005', brand: true },
+                  { icon: 'fa-brands fa-whatsapp', label: 'WhatsApp', val: WHATSAPP.general.label, brand: true },
                 ].map(item => (
                   <div key={item.label} className="info-item">
                     <div className="info-icon"><i className={`fa-${item.brand ? 'brands' : 'solid'} ${item.icon}`} /></div>
@@ -513,7 +534,7 @@ export default function Home() {
               <div className="social-row">
                 <a href="https://www.instagram.com/calvinotabuada/" className="social-btn"><i className="fa-brands fa-instagram" /></a>
                 <a href="https://www.facebook.com/inmobiliaria2804" className="social-btn"><i className="fa-brands fa-facebook-f" /></a>
-                <a href="https://wa.me/5491145713005" className="social-btn"><i className="fa-brands fa-whatsapp" /></a>
+                <a href={waLink('general')} className="social-btn"><i className="fa-brands fa-whatsapp" /></a>
               </div>
               <div className="contacto-mapa">
                 <iframe
@@ -570,15 +591,7 @@ export default function Home() {
       </section>
 
       {/* WHATSAPP FLOTANTE */}
-      <a
-        href="https://wa.me/5491145713005"
-        className="whatsapp-float"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Contactar por WhatsApp"
-      >
-        <i className="fa-brands fa-whatsapp" />
-      </a>
+      <WhatsAppFloat />
 
       <Footer />
     </>

@@ -80,9 +80,9 @@ export default function Emprendimientos() {
               <div className="emp-empty-icon"><i className="fa-solid fa-building-circle-arrow-right" /></div>
               <h3>Próximamente nuevos proyectos</h3>
               <p>Estamos incorporando nuevos emprendimientos a nuestra cartera. Dejanos tu consulta y te avisamos en cuanto estén disponibles.</p>
-              <a href="/#contacto" className="btn-primary">
+              <Link to="/" state={{ scrollTo: 'contacto' }} className="btn-primary">
                 <i className="fa-solid fa-bell" /> Quiero que me avisen
-              </a>
+              </Link>
             </div>
           ) : (
             <div className="emp-cards-grid">
@@ -107,9 +107,9 @@ export default function Emprendimientos() {
                         <div className="emp-stat"><i className="fa-solid fa-calendar-check" /><span>Entrega: {e.entrega}</span></div>
                       )}
                     </div>
-                    <a href="/#contacto" className="btn-primary btn-full">
+                    <Link to="/" state={{ scrollTo: 'contacto' }} className="btn-primary btn-full">
                       Consultar <i className="fa-solid fa-arrow-right" />
-                    </a>
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -127,7 +127,7 @@ export default function Emprendimientos() {
             <p>Si sos desarrollador o tenés un terreno, contactanos y lo comercializamos juntos.</p>
           </div>
           <div className="cta-actions">
-            <a href="/#contacto" className="btn-primary">Contactarnos</a>
+            <Link to="/" state={{ scrollTo: 'contacto' }} className="btn-primary">Contactarnos</Link>
             <Link to="/" className="btn-outline-white">Volver al inicio</Link>
           </div>
         </div>

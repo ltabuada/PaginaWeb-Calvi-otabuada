@@ -7,6 +7,7 @@ import { useListings } from '../context/ListingsContext'
 import { useConsultas } from '../context/ConsultasContext'
 import VideoPlayer from '../components/VideoPlayer'
 import { imgCard, imgFull } from '../lib/media'
+import { waLink, waParaOperacion } from '../lib/contacto'
 
 export default function ListingDetail() {
   const { id } = useParams()
@@ -160,7 +161,7 @@ export default function ListingDetail() {
                     ? <><i className="fa-solid fa-check" /> ¡Consulta enviada!</>
                     : <><i className="fa-solid fa-paper-plane" /> Enviar consulta</>}
                 </button>
-                <a href={`https://wa.me/5491112345678?text=Hola,%20me%20interesa%20la%20propiedad:%20${encodeURIComponent(propiedad.titulo)}`}
+                <a href={waLink(waParaOperacion(propiedad.operacion), `Hola, me interesa la propiedad: ${propiedad.titulo}`)}
                   target="_blank" rel="noreferrer" className="btn-whatsapp">
                   <i className="fa-brands fa-whatsapp" /> Consultar por WhatsApp
                 </a>
