@@ -66,26 +66,53 @@ Direction: **diagonal / overlap continuous flow** (surface concept-seed key `814
 
 ## Motion
 
-One authored moment, nothing else animates on arrival.
+**Tesis: la obra se levanta.** El sitio se arma mientras se lo mira, con el
+vocabulario que ya tiene la marca: el corte diagonal del isologo, el trazo de
+plano y la máscara por la que sube el texto. La pasada anterior había dejado
+una sola apertura y nada más; el pedido ahora es lo opuesto (animación
+protagonista, estilo Awwards), así que el criterio cambió de *cuánto* a
+*cómo*: pocos gestos, siempre los mismos, para que se lean como un solo idioma
+y no como efectos sueltos.
 
-**The opening** comes from the isologo: two offset squares meet, the gold seam
-lands where they overlap, and the curtain pulls back on the same diagonal the
-section seams use. 1.5s total, down from the old 3.2s splash — an intro that
-makes you wait stops being an intro. The hero's lines then rise out of a mask
-so the entrance reads as one piece instead of two chained animations.
+Cinco gestos:
 
-What was removed and why: every section had the identical fade-and-rise on
-scroll, which is the clearest tell of generated motion. Staggered entrances
-survive only where a list appears as a list (listing cards, testimonials, the
-process steps, which are an actual sequence), capped at three steps.
+| Gesto | Qué hace | Dónde |
+|---|---|---|
+| **Máscara** | los títulos suben palabra por palabra desde una línea de corte (`Titulo`) | todos los `h1`/`h2`, y el nombre gigante del pie |
+| **Cortina** | un barrido descubre la pieza; las fotos llegan agrandadas y se asientan | fotos de servicios y nosotros, tarjetas, reseñas, carteles |
+| **Trazo** | una línea se dibuja y el contenido se descubre debajo | filas de servicio, el recorrido de "Cómo trabajamos", barra de búsqueda y cifras del hero |
+| **Fondo** | la foto se mueve más lento que su marco (paralaje con `animation-timeline`) | fotos, hero, plano del CTA |
+| **Respuesta** | imán en botones; luz que sigue al puntero en tarjetas | solo con mouse real |
 
-Supporting motion only answers an action: links grow their underline from the
-left, cards lift once while their photo eases in, buttons compress on press,
-service rows tint on hover. `prefers-reduced-motion` drops the movement and
-keeps the state changes.
+Momentos de autor (los que se recuerdan):
+- **Apertura + hero.** Los dos cuadrados del isologo se encuentran y la cortina
+  se abre en diagonal; detrás, la foto respira (zoom lento) y cada foto nueva
+  entra con el mismo corte diagonal en vez de fundirse. Al hacer scroll el
+  fondo baja más despacio y el contenido se despide.
+- **Cómo trabajamos.** Los cuatro pasos suben en escalera y un trazo los une,
+  encendiendo cada círculo numerado cuando la línea llega.
+- **Emprendimientos.** Un haz de luz recorre el plano y lo va revelando
+  (`@property --scan`).
+- **Cintas.** Dos bandas que se cruzan en sentidos opuestos entre propiedades y
+  "Nosotros"; se detienen al pasar el mouse.
+- **Entre páginas.** View Transitions: la página nueva entra con el corte del
+  isologo.
 
-Animated content is visible by default — the displacement lives inside the
-keyframe with `both` fill, so a stylesheet that never runs cannot hide the page.
+Reglas que se respetan:
+- **Visible por defecto.** Todo estado oculto cuelga de `html[data-motion="on"]`,
+  que un script del `<head>` activa antes del primer pintado solo si no hay
+  `prefers-reduced-motion`. Sin JS o con movimiento reducido nada se oculta y
+  lo infinito (cintas, anillo) se detiene.
+- **Lo recortado a sí mismo deja 2px y `opacity: 0`.** Un elemento con
+  `clip-path` total no cuenta como visible para `IntersectionObserver` y nunca
+  recibiría el aviso de entrada (se descubrió en la práctica).
+- Se anima `transform`, `opacity`, `clip-path` y propiedades registradas; no
+  layout. Un solo observador global (`Movimiento`), listeners pasivos, el
+  puntero se lee y se escribe en `rAF` sin mezclar lecturas y escrituras.
+- Las transiciones se listan propiedad por propiedad (`--transition` ya no es
+  `all`).
+- El stagger de listas se corta a tres; los contadores esperan a que la
+  cortina de apertura suelte la pantalla.
 
 ## Browser surfaces
 
