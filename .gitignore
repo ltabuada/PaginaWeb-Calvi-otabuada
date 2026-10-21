@@ -1,0 +1,4 @@
+# Skills de agentes: se reinstalan con `npx skills add` y no van al repo.
+.agents/
+.claude/skills/
+skills-lock.json
