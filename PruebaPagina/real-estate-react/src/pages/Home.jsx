@@ -55,7 +55,7 @@ const TESTIMONIOS = [
   {
     nombre: 'Graciela P.',
     iniciales: 'GP',
-    texto: 'Trabajé con ellos para alquilar mi departamento en Villa Devoto y quedé muy satisfecha. Muy profesionales, responden rápido y se encargan de todo el papeleo. Los recomiendo sin dudar.',
+    texto: 'Trabajé con ellos para alquilar mi departamento y quedé muy satisfecha. Muy profesionales, responden rápido y se encargan de todo el papeleo. Los recomiendo sin dudar.',
     estrellas: 5,
     detalle: 'Propietaria · hace 2 meses',
     destacado: false,
@@ -79,7 +79,7 @@ const TESTIMONIOS = [
 ]
 
 const CINTA_PRINCIPAL = ['Alquiler', 'Venta', 'Tasación', 'Inversión', 'Emprendimientos']
-const CINTA_CRUZADA = ['Villa Devoto', 'Más de 35 años', 'Atención personalizada', 'Asesoramiento legal']
+const CINTA_CRUZADA = ['Conocemos la zona', 'Más de 35 años', 'Atención personalizada', 'Asesoramiento legal']
 
 export default function Home() {
   const { listingsPublicos } = useListings()
@@ -225,7 +225,7 @@ export default function Home() {
       <main id="contenido" tabIndex={-1}>
         {/* HERO */}
         <section className="hero" aria-label="Inicio">
-          <h1 className="sr-only">Calviño Tabuada Propiedades: alquiler, venta, tasación e inversión inmobiliaria en Villa Devoto</h1>
+          <h1 className="sr-only">Calviño Tabuada Propiedades: alquiler, venta, tasación e inversión inmobiliaria en Buenos Aires</h1>
           <div className="hero-bg" aria-hidden="true">
             {SLIDES.map((src, i) => (
               <div key={src} className={`hero-slide${slide === i ? ' activo' : ''}${previo === i ? ' previo' : ''}`}
@@ -318,7 +318,7 @@ export default function Home() {
                 <span className="brand-mark-lg" aria-hidden="true" />
                 <div>
                   <strong>35+ años</strong>
-                  <span>construyendo confianza en Villa Devoto</span>
+                  <span>construyendo confianza, operación a operación</span>
                 </div>
               </div>
             </div>
@@ -442,14 +442,14 @@ export default function Home() {
               <div className="nosotros-imgs">
                 <div className="img-grande-wrapper" data-reveal="imagen">
                   <div className="rev"><div className="par">
-                    <img className="img-grande" src="/Frente.jpeg" alt="Frente de la inmobiliaria Calviño Tabuada en Villa Devoto" width="1271" height="998" loading="lazy" decoding="async" />
+                    <img className="img-grande" src="/Frente.jpeg" alt="Frente de la inmobiliaria Calviño Tabuada" width="1271" height="998" loading="lazy" decoding="async" />
                   </div></div>
                 </div>
                 <div className="anillo-wrap">
                   <div className="anillo" aria-hidden="true">
                     <svg viewBox="0 0 200 200" focusable="false">
                       <defs><path id="anillo-trazo" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" /></defs>
-                      <text><textPath href="#anillo-trazo" textLength="496" lengthAdjust="spacing">Más de 35 años de experiencia · Villa Devoto · Calviño Tabuada ·</textPath></text>
+                      <text><textPath href="#anillo-trazo" textLength="496" lengthAdjust="spacing">Más de 35 años de experiencia · Calviño Tabuada · Propiedades ·</textPath></text>
                     </svg>
                   </div>
                   <img className="img-chica" src="/LogoCircular.jpeg" alt="Logo de Calviño Tabuada Propiedades" width="200" height="200" loading="lazy" decoding="async" />

@@ -317,8 +317,11 @@ h1, h2 { font-family: 'Schibsted Grotesk', system-ui, sans-serif; letter-spacing
   .servicios-visual-img { height: 340px; }
 }
 @media (max-width: 600px) {
-  .servicio-row { grid-template-columns: 40px 1fr; }
-  .servicio-row-icon { display: none; }
+  /* El ícono pasa a ser más chico y el texto toma todo el ancho restante. */
+  .servicio-row { grid-template-columns: 44px minmax(0, 1fr); gap: 1rem; padding: 1.7rem 0; }
+  .servicio-row-icon { width: 44px; height: 44px; font-size: 1rem; }
+  .servicio-row:hover { padding-left: 0; }
+  .servicio-items { flex-direction: column; gap: .35rem; }
 }
 
 /* ===== SECTION HEADER ===== */
