@@ -14,6 +14,7 @@ import Movimiento from './components/Movimiento'
 const Listings = lazy(() => import('./pages/Listings'))
 const ListingDetail = lazy(() => import('./pages/ListingDetail'))
 const Emprendimientos = lazy(() => import('./pages/Emprendimientos'))
+const EmprendimientoDetail = lazy(() => import('./pages/EmprendimientoDetail'))
 const AdminLogin = lazy(() => import('./pages/AdminLogin'))
 const AdminPanel = lazy(() => import('./pages/AdminPanel'))
 
@@ -32,6 +33,7 @@ export default function App() {
                   <Route path="/propiedades" element={<Listings />} />
                   <Route path="/propiedad/:id" element={<ListingDetail />} />
                   <Route path="/emprendimientos" element={<Emprendimientos />} />
+                  <Route path="/emprendimiento/:id" element={<EmprendimientoDetail />} />
                   <Route path="/admin/login" element={<AdminLogin />} />
                   <Route path="/admin" element={
                     <PrivateRoute>

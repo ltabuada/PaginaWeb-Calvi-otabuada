@@ -1710,3 +1710,40 @@ html[data-motion="on"] .footer-gigante.is-in .w > span {
    funcionando —cosa que `hidden` sí rompería—. */
 html { overflow-x: clip; }
 .emprendimientos-section, .hero, .cinta-wrap { overflow-x: clip; }
+
+/* ── Ficha de emprendimiento ─────────────────────────────────────────────────
+   La tarjeta entera es el enlace: el título lo extiende con ::after y el botón
+   queda por encima, igual que en las tarjetas de propiedad.                   */
+.emp-listing-card { position: relative; }
+.emp-listing-btn { position: relative; z-index: 2; }
+
+/* En la galería, la cuarta foto dice cuántas quedan en vez de cortar sin aviso. */
+.galeria-mas {
+  position: absolute; inset: 0; display: grid; place-content: center; gap: 0;
+  background: rgba(11,38,48,.72); color: #fff; backdrop-filter: blur(2px);
+  text-align: center; transition: background .25s ease;
+}
+.galeria-img:hover .galeria-mas { background: rgba(11,38,48,.82); }
+.galeria-mas strong { font-size: 1.5rem; font-weight: 700; line-height: 1; display: block; }
+.galeria-mas span { font-size: .72rem; letter-spacing: .08em; opacity: .8; }
+
+/* Contador dentro del visor de fotos. */
+.modal-contador {
+  position: absolute; bottom: 1.1rem; left: 50%; transform: translateX(-50%);
+  background: rgba(11,38,48,.78); color: #fff; font-size: .78rem; font-weight: 600;
+  padding: .3rem .8rem; border-radius: 99px; font-variant-numeric: tabular-nums;
+}
+
+.precio-sidebar-desde {
+  display: block; font-size: .72rem; font-weight: 600; letter-spacing: .07em;
+  color: var(--ink-2); text-transform: uppercase; margin-bottom: .1rem;
+}
+
+.detail-header-top { margin-bottom: .7rem; }
+/* El badge es absoluto en la tarjeta (va sobre la foto); en la ficha vive en
+   el flujo normal, si no se escapa hasta el navbar. */
+.detail-header-top .emp-badge { position: static; display: inline-block; }
+
+.detail-cargando {
+  min-height: 60vh; display: grid; place-items: center; color: var(--ink-2);
+}

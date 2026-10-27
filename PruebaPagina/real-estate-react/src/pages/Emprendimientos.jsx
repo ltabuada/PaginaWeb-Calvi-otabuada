@@ -85,7 +85,7 @@ export default function Emprendimientos() {
                       <span className={`emp-badge ${ESTADO_COLOR[e.estado]}`}>{ESTADO_LABEL[e.estado]}</span>
                     </div>
                     <div className="emp-listing-body">
-                      <h3>{e.titulo}</h3>
+                      <h3><Link to={`/emprendimiento/${e.id}`} className="card-enlace" viewTransition>{e.titulo}</Link></h3>
                       <p className="emp-listing-ubicacion"><i className="fa-solid fa-location-dot" aria-hidden="true" /> {e.ubicacion}</p>
                       <p className="emp-listing-desc">{e.descripcion}</p>
                       <div className="emp-listing-stats">
@@ -99,8 +99,8 @@ export default function Emprendimientos() {
                           <div className="emp-stat"><i className="fa-solid fa-calendar-check" aria-hidden="true" /><span>Entrega: {e.entrega}</span></div>
                         )}
                       </div>
-                      <Link to="/" state={{ scrollTo: 'contacto' }} className="btn-primary btn-full">
-                        Consultar
+                      <Link to={`/emprendimiento/${e.id}`} className="btn-primary btn-full emp-listing-btn" viewTransition>
+                        Ver emprendimiento
                       </Link>
                     </div>
                   </div>
