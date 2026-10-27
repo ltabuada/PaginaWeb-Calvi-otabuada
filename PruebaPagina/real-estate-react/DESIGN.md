@@ -40,9 +40,12 @@ Rule of thumb: **weight carries hierarchy, color carries one voice.** A heading
 is dark ink with a teal emphasis span — never two saturated colors side by side.
 On dark sections that emphasis switches to `--brand-on-dark`.
 
-Typography: Source Serif 4 (display/headings, weight 600) + Inter (UI/body).
-Source Serif replaced Fraunces, whose soft-serif quirk read as decorative rather
-than established; 700/800 weights were pulled back to 600 across serif headings.
+Typography: **Schibsted Grotesk** for everything, one family, hierarchy by
+weight. 400/500 for body, 700 with -0.028em tracking for headings. It went
+Fraunces → Source Serif 4 → Inter Tight → here: Fraunces read decorative, and
+Inter is the single most over-used face in generated interfaces (the detector
+flagged it 36 times). Schibsted is drawn for Norwegian press, so it holds both
+running text and headlines, and its a/g/R carry character Inter does not.
 
 The two blueprint illustrations were generated in the old gold-on-indigo palette.
 Rather than regenerate them, they render with `mix-blend-mode: luminosity` over a
@@ -60,6 +63,61 @@ Direction: **diagonal / overlap continuous flow** (surface concept-seed key `814
 - Testimonios: the featured review is raised/scaled instead of sitting flush in a uniform grid.
 - CTA banner: second AI-generated blueprint illustration (`blueprint-complejo.webp`) as background texture.
 - Section seams use matched `clip-path: polygon(...)` cuts + negative margins (hero↔servicios pair uses the same 90px value on both sides so the diagonal nests without a gap).
+
+## Motion
+
+**Tesis: la obra se levanta.** El sitio se arma mientras se lo mira, con el
+vocabulario que ya tiene la marca: el corte diagonal del isologo, el trazo de
+plano y la máscara por la que sube el texto. La pasada anterior había dejado
+una sola apertura y nada más; el pedido ahora es lo opuesto (animación
+protagonista, estilo Awwards), así que el criterio cambió de *cuánto* a
+*cómo*: pocos gestos, siempre los mismos, para que se lean como un solo idioma
+y no como efectos sueltos.
+
+Cinco gestos:
+
+| Gesto | Qué hace | Dónde |
+|---|---|---|
+| **Máscara** | los títulos suben palabra por palabra desde una línea de corte (`Titulo`) | todos los `h1`/`h2`, y el nombre gigante del pie |
+| **Cortina** | un barrido descubre la pieza; las fotos llegan agrandadas y se asientan | fotos de servicios y nosotros, tarjetas, reseñas, carteles |
+| **Trazo** | una línea se dibuja y el contenido se descubre debajo | filas de servicio, el recorrido de "Cómo trabajamos", barra de búsqueda y cifras del hero |
+| **Fondo** | la foto se mueve más lento que su marco (paralaje con `animation-timeline`) | fotos, hero, plano del CTA |
+| **Respuesta** | imán en botones; luz que sigue al puntero en tarjetas | solo con mouse real |
+
+Momentos de autor (los que se recuerdan):
+- **Apertura + hero.** Los dos cuadrados del isologo se encuentran y la cortina
+  se abre en diagonal; detrás, la foto respira (zoom lento) y cada foto nueva
+  entra con el mismo corte diagonal en vez de fundirse. Al hacer scroll el
+  fondo baja más despacio y el contenido se despide.
+- **Cómo trabajamos.** Los cuatro pasos suben en escalera y un trazo los une,
+  encendiendo cada círculo numerado cuando la línea llega.
+- **Emprendimientos.** Un haz de luz recorre el plano y lo va revelando
+  (`@property --scan`).
+- **Cintas.** Dos bandas que se cruzan en sentidos opuestos entre propiedades y
+  "Nosotros"; se detienen al pasar el mouse.
+- **Entre páginas.** View Transitions: la página nueva entra con el corte del
+  isologo.
+
+Reglas que se respetan:
+- **Visible por defecto.** Todo estado oculto cuelga de `html[data-motion="on"]`,
+  que un script del `<head>` activa antes del primer pintado solo si no hay
+  `prefers-reduced-motion`. Sin JS o con movimiento reducido nada se oculta y
+  lo infinito (cintas, anillo) se detiene.
+- **Lo recortado a sí mismo deja 2px y `opacity: 0`.** Un elemento con
+  `clip-path` total no cuenta como visible para `IntersectionObserver` y nunca
+  recibiría el aviso de entrada (se descubrió en la práctica).
+- Se anima `transform`, `opacity`, `clip-path` y propiedades registradas; no
+  layout. Un solo observador global (`Movimiento`), listeners pasivos, el
+  puntero se lee y se escribe en `rAF` sin mezclar lecturas y escrituras.
+- Las transiciones se listan propiedad por propiedad (`--transition` ya no es
+  `all`).
+- El stagger de listas se corta a tres; los contadores esperan a que la
+  cortina de apertura suelte la pantalla.
+
+## Browser surfaces
+
+Selection, caret, scrollbar, focus ring, underline offset and tabular numerals
+are themed from the palette rather than left to the browser.
 
 ## Assets
 

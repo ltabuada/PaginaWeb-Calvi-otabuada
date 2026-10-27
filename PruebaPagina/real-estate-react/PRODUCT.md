@@ -8,7 +8,7 @@ web
 
 ## Users
 
-Two groups: (1) people in Buenos Aires (Villa Devoto and surrounding barrios) looking to rent or buy residential property — departamentos, casas, PH — and browsing/filtering listings; (2) property owners who want to sell, rent, or get a free appraisal (tasación) of their property. Secondary: investors evaluating pre-sale developments (emprendimientos) or commercial units (local, oficina, galpón, terreno).
+Two groups: (1) people in Buenos Aires (the agency works mostly around Villa Urquiza and Villa Pueyrredón, but the site does not name any barrio) looking to rent or buy residential property — departamentos, casas, PH — and browsing/filtering listings; (2) property owners who want to sell, rent, or get a free appraisal (tasación) of their property. Secondary: investors evaluating pre-sale developments (emprendimientos) or commercial units (local, oficina, galpón, terreno).
 
 ## Product Purpose
 
@@ -16,7 +16,7 @@ Marketing and lead-generation site for an established neighborhood real estate a
 
 ## Positioning
 
-A long-established, personal neighborhood agency (35+ years in Villa Devoto) — not a large anonymous portal. The differentiator is full-service accompaniment: legal/documentation handling, market-accurate free appraisals, and direct relationships built over decades, evidenced by real client testimonials.
+A long-established, personal neighborhood agency (35+ years) — copy says "zona"/"barrio" in general and never names a specific barrio, by the owner's decision — not a large anonymous portal. The differentiator is full-service accompaniment: legal/documentation handling, market-accurate free appraisals, and direct relationships built over decades, evidenced by real client testimonials.
 
 ## Operating Context
 

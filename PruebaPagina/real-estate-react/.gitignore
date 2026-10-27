@@ -10,3 +10,8 @@ node_modules/
 # dist/ está commiteado porque el deploy es manual.
 # Descomentar cuando haya deploy automatizado.
 # dist/
+
+# Skills instaladas con `npx skills add` (se reinstalan desde sus repos)
+
+.claude/skills/
+skills-lock.json
