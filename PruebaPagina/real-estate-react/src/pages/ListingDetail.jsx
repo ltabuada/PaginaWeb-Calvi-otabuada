@@ -116,7 +116,9 @@ export default function ListingDetail() {
               onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setImgActual(i); setModalOpen(true) } }}
             >
               <img src={imgCard(img)} alt={`${propiedad.titulo} - foto ${i + 1}`} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" onError={e => e.currentTarget.classList.add('no-img')} />
-              <div className="overlay"><i aria-hidden="true" className="fa-solid fa-expand" /></div>
+              {i === 3 && propiedad.imagenes.length > 4
+                ? <div className="galeria-mas"><strong>+{propiedad.imagenes.length - 4}</strong><span>fotos</span></div>
+                : <div className="overlay"><i aria-hidden="true" className="fa-solid fa-expand" /></div>}
             </div>
           ))}
         </div>
@@ -222,6 +224,9 @@ export default function ListingDetail() {
             <img src={imgFull(propiedad.imagenes[imgActual])} alt={propiedad.titulo} />
             <button type="button" className="modal-prev" onClick={prevImg} aria-label="Foto anterior"><i aria-hidden="true" className="fa-solid fa-chevron-left" /></button>
             <button type="button" className="modal-next" onClick={nextImg} aria-label="Foto siguiente"><i aria-hidden="true" className="fa-solid fa-chevron-right" /></button>
+            {propiedad.imagenes.length > 1 && (
+              <div className="modal-contador">{imgActual + 1} / {propiedad.imagenes.length}</div>
+            )}
           </div>
         </div>
       )}
