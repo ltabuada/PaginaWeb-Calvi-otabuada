@@ -466,7 +466,7 @@ section { padding: 90px 0; }
 .emp-card-icon { width: 44px; height: 44px; background: rgba(27,111,112,0.12); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .emp-card-icon i { color: var(--gold); font-size: 1rem; }
 .emp-card strong { display: block; color: white; font-size: 0.95rem; margin-bottom: .3rem; font-family: 'Schibsted Grotesk', system-ui, sans-serif; }
-.emp-card span { color: rgba(255,255,255,0.5); font-size: .85rem; line-height: 1.5; }
+.emp-card span { color: #9fb8bd; font-size: .85rem; line-height: 1.5; }
 
 /* ===== EMPRENDIMIENTOS PAGE ===== */
 .emp-info-section { background: white; padding: 5rem 0; }
@@ -494,7 +494,7 @@ section { padding: 90px 0; }
 .emp-listing-img img { width: 100%; height: 100%; object-fit: cover; }
 .emp-badge { position: absolute; top: 1rem; left: 1rem; padding: .35rem .85rem; border-radius: 4px; font-size: .8rem; font-weight: 600; }
 .emp-badge--pozo { background: #fef3c7; color: #92400e; }
-.emp-badge--construccion { background: rgba(14,124,125,0.14); color: var(--teal-dark); }
+.emp-badge--construccion { background: #d6eceb; color: #0f4f50; }
 .emp-badge--estrenar { background: #dcfce7; color: #166534; }
 .emp-listing-body { padding: 1.5rem; }
 .emp-listing-body h3 { font-size: 1.1rem; color: var(--navy); margin-bottom: .4rem; }
@@ -505,7 +505,7 @@ section { padding: 90px 0; }
 .emp-stat i { color: var(--gold); font-size: .8rem; }
 .emp-estado-badge { padding: .3rem .75rem; border-radius: 4px; font-size: .8rem; font-weight: 600; }
 .emp-estado-en_pozo { background: #fef3c7; color: #92400e; }
-.emp-estado-en_construccion { background: rgba(14,124,125,0.14); color: var(--teal-dark); }
+.emp-estado-en_construccion { background: #d6eceb; color: #0f4f50; }
 .emp-estado-a_estrenar { background: #dcfce7; color: #166534; }
 .admin-nav-label { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,0.25); padding: 1rem 1rem .25rem; }
 .nav-badge { margin-left: auto; background: #ef4444; color: white; font-size: .68rem; font-weight: 700; min-width: 20px; height: 20px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; padding: 0 5px; }
@@ -649,7 +649,7 @@ section { padding: 90px 0; }
 .testimonios .testimonios-rating-header { display: flex; align-items: center; gap: 1rem; justify-content: center; margin-top: 1rem; margin-bottom: 0.5rem; }
 .testimonios-score { font-size: 3.2rem; font-weight: 700; color: var(--gold-light); font-family: 'Schibsted Grotesk', system-ui, sans-serif; line-height: 1; }
 .testimonios-score-info .estrellas { font-size: 1.1rem; letter-spacing: 3px; }
-.testimonios-total { font-size: 0.78rem; color: rgba(255,255,255,0.4); margin-top: 3px; display: block; }
+.testimonios-total { font-size: 0.78rem; color: #9fb8bd; margin-top: 3px; display: block; }
 
 /* ===== WHATSAPP FLOTANTE ===== */
 .whatsapp-float {
@@ -768,7 +768,7 @@ section { padding: 90px 0; }
 }
 .page-header-content { position: relative; z-index: 1; }
 .page-header h1 { font-size: clamp(2.2rem, 4.5vw, 3.5rem); font-weight: 700; color: white; margin-bottom: 0.7rem; }
-.page-header p { color: rgba(255,255,255,0.45); font-size: 1rem; }
+.page-header p { color: #9fb8bd; font-size: 1rem; }
 
 /* ===== LISTINGS PAGE ===== */
 .filtros-section {
