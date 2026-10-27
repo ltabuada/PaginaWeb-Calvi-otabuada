@@ -3,11 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b2630" />
     <title>CalviñoTabuadaPropiedades</title>
+    <script>
+      // Se decide antes del primer pintado: así los elementos que entran
+      // animados nunca parpadean visibles. Sin JS, o con movimiento reducido,
+      // todo queda visible y quieto.
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.dataset.motion = 'on'
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="preload" as="image" href="/fotoSlide.jpeg" fetchpriority="high" />
     <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-    <script type="module" crossorigin src="/assets/index-DanPENR5.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BdDTBkj8.css">
+    <script type="module" crossorigin src="/assets/index-Dxm8lEzD.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C6_rTj7d.css">
   </head>
   <body>
     <div id="root"></div>

@@ -1702,3 +1702,11 @@ html[data-motion="on"] .footer-gigante.is-in .w > span {
 .propiedad-card { cursor: pointer; }
 .card-enlace::after { content: ''; position: absolute; inset: 0; z-index: 1; }
 .propiedad-card .card-btn { position: relative; z-index: 2; }
+
+/* Varias piezas salen del ancho a propósito (el panel diagonal de
+   emprendimientos, los slides del hero, la cinta): es el lenguaje visual. Lo
+   que no corresponde es que eso genere barra horizontal. `clip` contiene el
+   desborde sin crear un contenedor de scroll, así `position: sticky` sigue
+   funcionando —cosa que `hidden` sí rompería—. */
+html { overflow-x: clip; }
+.emprendimientos-section, .hero, .cinta-wrap { overflow-x: clip; }
