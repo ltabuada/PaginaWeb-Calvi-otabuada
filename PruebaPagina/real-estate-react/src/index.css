@@ -75,7 +75,9 @@ body {
   font-family: 'Schibsted Grotesk', system-ui, sans-serif;
   background: var(--cream);
   color: var(--text);
-  overflow-x: hidden;
+  /* clip y no hidden: hidden convierte al body en contenedor de scroll y
+     rompe position:sticky en toda la página. */
+  overflow-x: clip;
   font-size: 16px;
   line-height: 1.6;
 }
@@ -1746,4 +1748,107 @@ html { overflow-x: clip; }
 
 .detail-cargando {
   min-height: 60vh; display: grid; place-items: center; color: var(--ink-2);
+}
+
+/* ═══ Recorrido de obra ══════════════════════════════════════════════════════
+   Para proyectos en pozo. La imagen queda fija mientras el texto avanza al
+   lado; el render arranca como plano y se materializa. Es siempre el mismo
+   render: lo que cambia es cuánto está "construido".                         */
+
+.obra {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+  margin: 1rem 0 4rem; align-items: start;
+}
+
+.obra-visual { position: sticky; top: 92px; }
+.obra-visual-marco {
+  position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius);
+  overflow: hidden; background: var(--brand-deep); box-shadow: var(--shadow);
+}
+
+.obra-img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity .7s var(--ease-io, cubic-bezier(.16,1,.3,1)),
+                          filter .7s ease, clip-path .9s cubic-bezier(.16,1,.3,1);
+}
+.obra-img--activa { opacity: 1; }
+
+/* El "todavía no construido": el render en frío, recortado a la altura que
+   corresponde al paso. No es otra imagen, es la misma con menos revelado. */
+.obra-img--plano {
+  filter: grayscale(1) contrast(1.5) brightness(1.12);
+  clip-path: inset(calc(100% - var(--revelado, 100%)) 0 0 0);
+}
+
+/* Retícula de plano sobre la parte sin construir. Es geometría, no textura
+   decorativa: da la lectura de documento técnico. */
+/* El edificio como proyección: se ve el volumen, se lee que todavía no está. */
+.obra-img--fantasma {
+  filter: grayscale(1) brightness(1.3) contrast(.78);
+  opacity: 0; mix-blend-mode: luminosity;
+}
+.obra-img--fantasma.obra-img--activa { opacity: .3; }
+
+.obra-reticula {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  transition: opacity .6s ease;
+  background:
+    linear-gradient(rgba(111,192,192,.16) 1px, transparent 1px) 0 0 / 100% 38px,
+    linear-gradient(90deg, rgba(111,192,192,.16) 1px, transparent 1px) 0 0 / 38px 100%,
+    linear-gradient(180deg, rgba(11,38,48,.55), rgba(11,38,48,.2));
+}
+.obra-reticula--visible { opacity: 1; }
+
+.obra-progreso {
+  position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%);
+  display: flex; gap: .4rem; padding: .4rem .7rem; border-radius: 99px;
+  background: rgba(11,38,48,.5); backdrop-filter: blur(6px);
+}
+.obra-punto {
+  width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.35);
+  transition: background .3s ease, width .3s ease;
+}
+.obra-punto--activo { background: var(--brand-on-dark); width: 18px; border-radius: 99px; }
+
+.obra-pasos { display: flex; flex-direction: column; }
+.obra-paso {
+  min-height: 74vh; display: flex; flex-direction: column; justify-content: center;
+  opacity: .34; transition: opacity .45s ease;
+}
+.obra-paso--activo { opacity: 1; }
+.obra-paso-indice {
+  font-size: .72rem; font-weight: 700; letter-spacing: .14em;
+  color: var(--brand); font-variant-numeric: tabular-nums; margin-bottom: .7rem;
+}
+.obra-paso h3 {
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem); font-weight: 700;
+  letter-spacing: -0.028em; color: var(--ink); margin-bottom: .7rem; line-height: 1.16;
+}
+.obra-paso > p { color: var(--ink-2); font-size: 1rem; line-height: 1.7; max-width: 46ch; }
+
+.obra-datos { list-style: none; margin: 1.3rem 0 0; display: flex; flex-direction: column; gap: .5rem; }
+.obra-datos li {
+  display: flex; align-items: flex-start; gap: .6rem;
+  font-size: .9rem; color: var(--ink); line-height: 1.5;
+}
+.obra-datos i { color: var(--brand); font-size: .75rem; margin-top: .35rem; flex-shrink: 0; }
+
+.obra-img-movil { display: none; }
+
+/* En celular la imagen fija no tiene dónde quedarse: cada paso lleva la suya
+   y el recorrido se lee como una secuencia vertical. */
+@media (max-width: 900px) {
+  .obra { grid-template-columns: 1fr; gap: 0; }
+  .obra-visual { display: none; }
+  .obra-paso { min-height: 0; opacity: 1; padding: 2.2rem 0; border-top: 1px solid var(--line); }
+  .obra-paso:first-child { border-top: none; padding-top: .5rem; }
+  .obra-img-movil {
+    display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
+    border-radius: var(--radius); margin-top: 1.4rem; background: var(--surface-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .obra-paso { opacity: 1; }
+  .obra-img { transition: opacity .01ms; }
 }

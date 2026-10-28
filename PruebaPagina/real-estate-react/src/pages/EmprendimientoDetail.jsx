@@ -5,10 +5,12 @@ import Footer from '../components/Footer'
 import MapView from '../components/MapView'
 import VideoPlayer from '../components/VideoPlayer'
 import Titulo from '../components/Titulo'
+import RecorridoObra from '../components/RecorridoObra'
 import { useEmprendimientos } from '../context/EmprendimientosContext'
 import { useConsultas } from '../context/ConsultasContext'
 import { imgCard, imgFull } from '../lib/media'
 import { waLink } from '../lib/contacto'
+import { pasosDeObra } from '../lib/recorrido'
 
 const formatoNumero = new Intl.NumberFormat('es-AR')
 
@@ -28,6 +30,10 @@ export default function EmprendimientoDetail() {
   const [formSent, setFormSent] = useState(false)
 
   const fotos = emp?.imagenes?.filter(Boolean) ?? []
+  // Un proyecto en pozo no tiene nada que fotografiar: en vez de una galería
+  // suelta, el recorrido cuenta qué va a ser. Los terminados van a la galería.
+  const enPozo = emp?.estado === 'en_pozo'
+  const pasos = enPozo && emp ? pasosDeObra(emp) : []
 
   // Los datos llegan por onSnapshot: mientras carga no existe todavía, y recién
   // cuando terminó de cargar y sigue sin aparecer se trata como inexistente.
@@ -124,8 +130,10 @@ export default function EmprendimientoDetail() {
             )}
           </div>
 
+          {pasos.length > 0 && <RecorridoObra emp={emp} pasos={pasos} />}
+
           {/* GALERÍA */}
-          {fotos.length > 0 ? (
+          {fotos.length > 0 && !enPozo ? (
             <div className="galeria-principal">
               {fotos.slice(0, 4).map((img, i) => {
                 const restantes = fotos.length - 4
@@ -160,11 +168,11 @@ export default function EmprendimientoDetail() {
                 )
               })}
             </div>
-          ) : (
+          ) : pasos.length === 0 ? (
             <div className="galeria-sin-fotos">
               <i aria-hidden="true" className="fa-solid fa-image" /> Todavía no hay fotos de este emprendimiento
             </div>
-          )}
+          ) : null}
 
           <div className="detail-main">
             <div className="detail-info">
