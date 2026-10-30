@@ -1751,97 +1751,182 @@ html { overflow-x: clip; }
 }
 
 /* ═══ Recorrido de obra ══════════════════════════════════════════════════════
-   Para proyectos en pozo. La imagen queda fija mientras el texto avanza al
-   lado; el render arranca como plano y se materializa. Es siempre el mismo
-   render: lo que cambia es cuánto está "construido".                         */
+   El edificio ocupa la pantalla entera y se levanta atado al scroll real; la
+   información pasa por encima. --p va de 0 a 1 y lo escribe el componente en
+   cada frame: es lo único que cambia, así el navegador solo recompone.       */
 
 .obra {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
-  margin: 1rem 0 4rem; align-items: start;
+  position: relative;
+  /* Rompe el contenedor de la ficha para ocupar el ancho completo. */
+  width: 100vw; margin-left: calc(50% - 50vw); margin-bottom: 4rem;
+  --p: 0;
+  background: var(--brand-deep);
 }
 
-.obra-visual { position: sticky; top: 92px; }
-.obra-visual-marco {
-  position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius);
-  overflow: hidden; background: var(--brand-deep); box-shadow: var(--shadow);
+/* ── Fondo ─────────────────────────────────────────────────────────────── */
+.obra-fondo {
+  position: sticky; top: 0; height: 100vh; width: 100%;
+  overflow: clip; background: var(--brand-deep);
 }
 
-.obra-img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  opacity: 0; transition: opacity .7s var(--ease-io, cubic-bezier(.16,1,.3,1)),
-                          filter .7s ease, clip-path .9s cubic-bezier(.16,1,.3,1);
+.obra-capa {
+  position: absolute; inset: 0; opacity: 0;
+  clip-path: polygon(0 0, 0 0, -12% 100%, 0 100%);
+  transition: opacity .55s ease, clip-path .95s cubic-bezier(.76,0,.24,1);
 }
-.obra-img--activa { opacity: 1; }
+.obra-capa--activa { opacity: 1; clip-path: polygon(0 0, 112% 0, 100% 100%, 0 100%); }
 
-/* El "todavía no construido": el render en frío, recortado a la altura que
-   corresponde al paso. No es otra imagen, es la misma con menos revelado. */
-.obra-img--plano {
-  filter: grayscale(1) contrast(1.5) brightness(1.12);
-  clip-path: inset(calc(100% - var(--revelado, 100%)) 0 0 0);
+.obra-foto {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  /* Deriva lento mientras se recorre: el encuadre nunca queda del todo quieto. */
+  transform: scale(1.08) translate3d(0, calc(var(--p) * -1.4%), 0);
+  transition: transform 1.1s cubic-bezier(.16,1,.3,1);
+}
+.obra-capa--activa .obra-foto { animation: obraDeriva 24s ease-in-out infinite alternate; }
+@keyframes obraDeriva {
+  from { transform: scale(1.07) translate3d(0, 0, 0); }
+  to   { transform: scale(1.14) translate3d(-1.6%, -1.2%, 0); }
 }
 
-/* Retícula de plano sobre la parte sin construir. Es geometría, no textura
-   decorativa: da la lectura de documento técnico. */
-/* El edificio como proyección: se ve el volumen, se lee que todavía no está. */
-.obra-img--fantasma {
-  filter: grayscale(1) brightness(1.3) contrast(.78);
-  opacity: 0; mix-blend-mode: luminosity;
+/* ── La obra levantándose ──────────────────────────────────────────────────
+   Misma imagen en frío. El clip-path sube con --p: abajo ya construido,
+   arriba todavía plano.                                                     */
+.obra-plano {
+  position: absolute; inset: 0; opacity: 0;
+  transition: opacity .8s ease;
 }
-.obra-img--fantasma.obra-img--activa { opacity: .3; }
+.obra-plano--visible { opacity: 1; }
 
+.obra-foto--frio {
+  filter: grayscale(1) contrast(1.42) brightness(1.1);
+  clip-path: inset(calc((1 - var(--p)) * 100%) 0 0 0);
+  transition: none;  /* lo mueve --p, no una transición */
+  animation: none;
+}
+
+/* Retícula de documento técnico sobre lo que todavía no existe.
+   El detector la marca como "two-axis grid background", que es un antipatrón
+   cuando se usa de textura decorativa. Acá no: va encima del render pasado a
+   plano, que es el instrumento que la regla pide debajo de una retícula. */
 .obra-reticula {
-  position: absolute; inset: 0; pointer-events: none; opacity: 0;
-  transition: opacity .6s ease;
+  position: absolute; inset: 0;
+  clip-path: inset(0 0 calc(var(--p) * 100%) 0);
   background:
-    linear-gradient(rgba(111,192,192,.16) 1px, transparent 1px) 0 0 / 100% 38px,
-    linear-gradient(90deg, rgba(111,192,192,.16) 1px, transparent 1px) 0 0 / 38px 100%,
-    linear-gradient(180deg, rgba(11,38,48,.55), rgba(11,38,48,.2));
+    linear-gradient(rgba(111,192,192,.22) 1px, transparent 1px) 0 0 / 100% 44px,
+    linear-gradient(90deg, rgba(111,192,192,.22) 1px, transparent 1px) 0 0 / 44px 100%,
+    linear-gradient(180deg, rgba(11,38,48,.82), rgba(11,38,48,.46));
 }
-.obra-reticula--visible { opacity: 1; }
 
-.obra-progreso {
-  position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%);
-  display: flex; gap: .4rem; padding: .4rem .7rem; border-radius: 99px;
-  background: rgba(11,38,48,.5); backdrop-filter: blur(6px);
+/* La línea de avance: marca hasta dónde llegó la construcción. */
+.obra-linea {
+  position: absolute; left: 0; right: 0; height: 1px;
+  bottom: calc(var(--p) * 100%);
+  background: linear-gradient(90deg, transparent, var(--brand-on-dark), transparent);
+  box-shadow: 0 0 18px 1px rgba(111,192,192,.55);
+  opacity: calc(1 - var(--p));
 }
-.obra-punto {
-  width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.35);
-  transition: background .3s ease, width .3s ease;
-}
-.obra-punto--activo { background: var(--brand-on-dark); width: 18px; border-radius: 99px; }
 
-.obra-pasos { display: flex; flex-direction: column; }
+/* Viñeta: sostiene la legibilidad del texto sobre cualquier foto. */
+/* El texto ocupa el primer 42% del ancho: hasta ahí el velo va casi sólido y
+   recién después se abre, para que la foto respire sin comerse la lectura. */
+.obra-vineta {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(96deg,
+      rgba(11,38,48,.96) 0%, rgba(11,38,48,.93) 30%,
+      rgba(11,38,48,.74) 48%, rgba(11,38,48,.28) 74%, rgba(11,38,48,.42) 100%),
+    radial-gradient(130% 95% at 72% 38%, transparent 38%, rgba(11,38,48,.55) 100%);
+}
+
+/* ── HUD ───────────────────────────────────────────────────────────────── */
+.obra-hud {
+  position: sticky; top: 50vh; z-index: 3;
+  float: right; margin-right: clamp(1rem, 4vw, 3.5rem);
+  display: flex; flex-direction: column; align-items: center; gap: .8rem;
+  height: 0; transform: translateY(-50%);
+  color: var(--brand-on-dark); font-variant-numeric: tabular-nums;
+}
+.obra-hud-num {
+  font-size: 2.4rem; font-weight: 700; letter-spacing: -.045em; color: #fff;
+  line-height: 1; text-shadow: 0 2px 24px rgba(11,38,48,.7);
+}
+.obra-hud-total { font-size: .78rem; opacity: .55; }
+.obra-hud-barra { width: 2px; height: 120px; background: rgba(255,255,255,.18); border-radius: 2px; overflow: hidden; }
+.obra-hud-relleno {
+  display: block; width: 100%; border-radius: 2px; background: var(--brand-on-dark);
+  height: calc((var(--i) + 1) / var(--total) * 100%);
+  transition: height .6s cubic-bezier(.16,1,.3,1);
+}
+
+/* ── Pasos, por encima del fondo ───────────────────────────────────────── */
+.obra-pasos { position: relative; z-index: 2; margin-top: -100vh; }
+
 .obra-paso {
-  min-height: 74vh; display: flex; flex-direction: column; justify-content: center;
-  opacity: .34; transition: opacity .45s ease;
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 0 clamp(1.3rem, 7vw, 7rem);
 }
-.obra-paso--activo { opacity: 1; }
-.obra-paso-indice {
-  font-size: .72rem; font-weight: 700; letter-spacing: .14em;
-  color: var(--brand); font-variant-numeric: tabular-nums; margin-bottom: .7rem;
-}
-.obra-paso h3 {
-  font-size: clamp(1.5rem, 2.6vw, 2.1rem); font-weight: 700;
-  letter-spacing: -0.028em; color: var(--ink); margin-bottom: .7rem; line-height: 1.16;
-}
-.obra-paso > p { color: var(--ink-2); font-size: 1rem; line-height: 1.7; max-width: 46ch; }
 
-.obra-datos { list-style: none; margin: 1.3rem 0 0; display: flex; flex-direction: column; gap: .5rem; }
-.obra-datos li {
-  display: flex; align-items: flex-start; gap: .6rem;
-  font-size: .9rem; color: var(--ink); line-height: 1.5;
+/* Visible por defecto: la entrada es una mejora, no un requisito para leer. */
+.obra-tarjeta {
+  max-width: 34rem;
+  transition: opacity .34s cubic-bezier(.16,1,.3,1), transform .42s cubic-bezier(.16,1,.3,1);
 }
-.obra-datos i { color: var(--brand); font-size: .75rem; margin-top: .35rem; flex-shrink: 0; }
+.obra-paso:not(.obra-paso--activo) .obra-tarjeta { opacity: .06; transform: translateY(18px); }
+
+/* Las palabras del título entran escalonadas desde detrás de su línea. */
+.obra-titulo {
+  font-size: clamp(2rem, 5.4vw, 3.9rem); font-weight: 700; letter-spacing: -.035em;
+  line-height: 1.04; color: #fff; margin-bottom: 1.1rem;
+}
+.obra-palabra { display: inline-block; }
+.obra-paso--activo .obra-palabra {
+  animation: obraPalabra .62s cubic-bezier(.16,1,.3,1) backwards;
+  animation-delay: calc(var(--j) * 65ms + 120ms);
+}
+@keyframes obraPalabra {
+  from { opacity: 0; transform: translateY(.5em) rotate(1.5deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+.obra-texto {
+  font-size: clamp(.98rem, 1.5vw, 1.1rem); line-height: 1.68;
+  color: rgba(226,240,240,.84); max-width: 42ch;
+}
+
+.obra-datos { list-style: none; margin: 1.6rem 0 0; display: flex; flex-direction: column; gap: .6rem; }
+.obra-datos li {
+  display: flex; align-items: flex-start; gap: .65rem;
+  font-size: .92rem; color: #e6f1f1; line-height: 1.5;
+}
+.obra-paso--activo .obra-datos li {
+  animation: obraDato .5s cubic-bezier(.16,1,.3,1) backwards;
+  animation-delay: calc(var(--k) * 85ms + 420ms);
+}
+@keyframes obraDato {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: none; }
+}
+.obra-datos i {
+  color: var(--brand-on-dark); font-size: .72rem; margin-top: .4rem; flex-shrink: 0;
+}
 
 .obra-img-movil { display: none; }
 
-/* En celular la imagen fija no tiene dónde quedarse: cada paso lleva la suya
-   y el recorrido se lee como una secuencia vertical. */
+/* ── Celular ───────────────────────────────────────────────────────────────
+   El fondo fijo no tiene dónde quedarse en una pantalla alta y angosta: cada
+   paso lleva su imagen y el recorrido se lee como secuencia vertical.       */
 @media (max-width: 900px) {
-  .obra { grid-template-columns: 1fr; gap: 0; }
-  .obra-visual { display: none; }
-  .obra-paso { min-height: 0; opacity: 1; padding: 2.2rem 0; border-top: 1px solid var(--line); }
+  .obra { background: transparent; width: auto; margin-left: 0; }
+  .obra-fondo, .obra-hud { display: none; }
+  .obra-pasos { margin-top: 0; }
+  .obra-paso { min-height: 0; display: block; padding: 2.2rem 0; border-top: 1px solid var(--line); }
   .obra-paso:first-child { border-top: none; padding-top: .5rem; }
+  .obra-tarjeta,
+  .obra-paso:not(.obra-paso--activo) .obra-tarjeta { opacity: 1; transform: none; max-width: none; }
+  .obra-titulo { color: var(--ink); font-size: clamp(1.55rem, 7vw, 2.1rem); }
+  .obra-palabra { opacity: 1; transform: none; animation: none !important; }
+  .obra-texto { color: var(--ink-2); }
+  .obra-datos li { color: var(--ink); opacity: 1; transform: none; animation: none !important; }
   .obra-img-movil {
     display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
     border-radius: var(--radius); margin-top: 1.4rem; background: var(--surface-2);
@@ -1849,6 +1934,9 @@ html { overflow-x: clip; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .obra-paso { opacity: 1; }
-  .obra-img { transition: opacity .01ms; }
+  .obra-foto, .obra-capa--activa .obra-foto { animation: none; transform: scale(1.04); transition: none; }
+  .obra-tarjeta { opacity: 1; transform: none; transition: none; }
+  .obra-palabra, .obra-datos li { opacity: 1; transform: none; animation: none !important; }
+  .obra-paso:not(.obra-paso--activo) .obra-tarjeta { opacity: 1; transform: none; }
+  .obra-linea { display: none; }
 }
